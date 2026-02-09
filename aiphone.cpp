@@ -12,10 +12,10 @@ int main() {
      cin >> base;
 
       for (int i = 1; i < n; i++) {
-           cout << "\n i="<<i;
+           cout << "\n i="<<i; // debug line
            int x;
             cin >> x;
-             cout << " x="<<x;
+             cout << " x="<<x; // debug line
              if(x == base) {
                 same++;
              }
