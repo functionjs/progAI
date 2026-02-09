@@ -57,7 +57,7 @@ Yes
 ## Variants of codes
 ### Varaint1 from GPT (erroneous)
 
-```c++=
+```cpp
 #include <iostream>
 
 using namespace std;
