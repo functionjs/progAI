@@ -16,8 +16,110 @@
     
     <div>
         <h1>Artefact Phone Task </h1>
+        <div>Number of phone: <input type="number" id="phoneNumber" value="2"> 
+        <button onclick="UpdateFields()"> Update Fields </button>
+        </div>
+
+        <div id="inputContainer"></div>
+
         text text text text 
+        <div><button onclick="PhoneProgram()"> Click </button></div>
+
+        <div id="result">
+
+        </div>
     </div>
+
+
+    <script>
+        function WriteResult(result){
+            document.getElementById("result").textContent = result;
+        }
+
+        function UpdateFields(){
+            DynamicField(Number(document.getElementById("phoneNumber").value));
+        }
+
+        function DynamicField(number){
+            var conteiner = document.getElementById("inputContainer");
+            for(let i =0;i<number;i++){
+                let newInput = document.createElement('input');
+
+                newInput.type = 'number';
+                newInput.id = 'inputField' + (conteiner.children.length);
+                newInput.value = 100;
+
+                conteiner.appendChild(newInput);
+            }
+            
+        }
+
+
+        function PhoneProgram() {
+            var n = Number(document.getElementById("phoneNumber").value);
+
+            if (n < 2) {
+                WriteResult("Phone n < 2");
+                return;
+            }
+            
+            // Variables only - no data structures (як у C++)
+            let firstWeight = 0;
+            let secondWeight = 0;
+            let firstCount = 0;
+            let secondCount = 0;
+            let foundSecond = false;
+            
+            // Read all weights (імітація cin через prompt для простоти)
+            for (let i = 0; i < n; i++) {
+
+                let weight = Number(document.getElementById("inputField" + i).value);
+                // const weight = Number(prompt(`Enter weight ${i + 1}:`) || 0);
+                
+                if (i === 0) {
+                    // First phone sets the reference
+                    firstWeight = weight;
+                    firstCount = 1;
+                } else {
+                    if (weight === firstWeight) {
+                        firstCount++;
+                    } else {
+                        if (!foundSecond) {
+                            // Found a different weight
+                            secondWeight = weight;
+                            foundSecond = true;
+                            secondCount = 1;
+                        } else {
+                            if (weight === secondWeight) {
+                                secondCount++;
+                            } else {
+                                // Found a third different weight - impossible
+                                WriteResult("Multiple phones of each weight");
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Check if exactly one phone is different
+            if (!foundSecond) {
+                // All phones have the same weight
+                WriteResult("All phones have the same weight");
+            } else if (firstCount === 1 || secondCount === 1) {
+                // Exactly one phone is different
+                WriteResult("Exactly one phone is different");
+            } else {
+                // Multiple phones of each weight
+                WriteResult("Multiple phones of each weight");
+            }
+        
+
+        }
+
+
+        
+    </script>
 
 </body>
 </html>
