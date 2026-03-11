@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Crisis Management 💰</title>
+<style>
+body { background:#111; color:#eee; font-family:Arial; }
+h1,h2 { color:gold; }
+input,button { margin:5px; padding:5px; }
+.account { width:60px; }
+#state { background:#222; padding:10px; margin-top:10px; }
+</style>
+</head>
+<body>
+
+<h1>Crisis Management 💰</h1>
+<h2>Author: Your First Name Last Name</h2>
+
+<label>Your Name:</label>
+<input id="playerName" value="Manager1">
+
+<label>Partner:</label>
+<input id="partnerName" value="Robo1">
+
+<br><br>
+
+<label>A:</label><input id="accA" class="account" value="3">
+<label>B:</label><input id="accB" class="account" value="4">
+<label>C:</label><input id="accC" class="account" value="5">
+
+<br><br>
+
+<button id="startBtn">Start Game</button>
+<button id="turnBtn">Make Turn</button>
+
+<div id="state"></div>
+
+<script>
+
+// ===================== GAME ENGINE =====================
+
+let game = {};
+
+function equilibrium(a,b,c){
+    return a ^ b ^ c;
+}
+
+function initGame(){
+    game = {
+        a: parseInt(accA.value),
+        b: parseInt(accB.value),
+        c: parseInt(accC.value),
+        currentPlayer: "human",
+        partnerType: partnerName.value,
+        finished: false
+    };
+    renderState();
+}
+
+function humanMove(){
+    let acc = prompt("Choose account: a, b, c");
+    let amount = parseInt(prompt("Amount to transfer"));
+
+    if(!["a","b","c"].includes(acc)) return;
+    if(amount <=0 || amount > game[acc]) return;
+
+    game[acc] -= amount;
+}
+
+function robotMove(){
+
+    if(game.partnerType === "Robo1"){
+        randomMove();
+    }
+    else if(game.partnerType === "Robo2"){
+        smartMove(true);
+    }
+    else if(game.partnerType === "Robo3"){
+        smartMove(false);
+    }
+}
+
+function randomMove(){
+    let accounts = ["a","b","c"].filter(x=>game[x]>0);
+    let acc = accounts[Math.floor(Math.random()*accounts.length)];
+    let amount = Math.floor(Math.random()*game[acc])+1;
+    game[acc] -= amount;
+}
+
+function smartMove(withMistake){
+
+    let xor = equilibrium(game.a,game.b,game.c);
+
+    if(xor === 0 || (withMistake && Math.random()<0.2)){
+        randomMove();
+        return;
+    }
+
+    let accounts = ["a","b","c"];
+    for(let acc of accounts){
+        let target = game[acc] ^ xor;
+        if(target < game[acc]){
+            game[acc] = target;
+            return;
+        }
+    }
+}
+
+function checkWinner(){
+    if(game.a===0 && game.b===0 && game.c===0){
+        game.finished = true;
+        state.innerHTML += "<br>Winner: " +
+            (game.currentPlayer === "human" ?
+            partnerName.value : playerName.value);
+    }
+}
+
+function makeTurn(){
+
+    if(game.finished) return;
+
+    if(game.currentPlayer === "human"){
+        humanMove();
+        game.currentPlayer = "robot";
+    } else {
+        robotMove();
+        game.currentPlayer = "human";
+    }
+
+    checkWinner();
+    renderState();
+}
+
+function renderState(){
+    state.innerHTML =
+        "A="+game.a+
+        " B="+game.b+
+        " C="+game.c+
+        "<br>Equilibrium xor = "+
+        equilibrium(game.a,game.b,game.c)+
+        "<br>Current player: "+game.currentPlayer;
+}
+
+// ===================== EVENTS (IoC) =====================
+
+startBtn.addEventListener("click", initGame);
+turnBtn.addEventListener("click", makeTurn);
+
+</script>
+</body>
+</html>
