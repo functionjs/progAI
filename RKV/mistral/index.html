@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crisis Management 💰</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Crisis Management 💰</h1>
+    <h2>Author: {Your First and Last Name}</h2>
+
+    <div class="legend">
+        <h3>Game Legend</h3>
+        <p>
+            A small financial company is experiencing a crisis. The director decides to transfer all amounts to Bitcoin and fire the stupidest manager.
+            Managers take turns transferring money from accounts. The one who can't transfer or violates the protocol is fired.
+        </p>
+    </div>
+
+    <div class="game-setup">
+        <label for="playerName">Your Name:</label>
+        <input type="text" id="playerName" placeholder="Enter your name">
+
+        <label for="partnerName">Partner Name:</label>
+        <input type="text" id="partnerName" placeholder="Enter partner name (Robo1, Robo2, Robo3)">
+
+        <div class="accounts">
+            <label for="accountA">Account A:</label>
+            <input type="number" id="accountA" placeholder="Coins in A">
+
+            <label for="accountB">Account B:</label>
+            <input type="number" id="accountB" placeholder="Coins in B">
+
+            <label for="accountC">Account C:</label>
+            <input type="number" id="accountC" placeholder="Coins in C">
+        </div>
+
+        <button id="startGame">Start Game</button>
+        <button id="makeTurn">Make Turn</button>
+    </div>
+
+    <div class="game-state">
+        <h3>Game State</h3>
+        <pre id="gameLog"></pre>
+    </div>
+
+    <div class="winner">
+        <h3>Winner</h3>
+        <pre id="winner"></pre>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
