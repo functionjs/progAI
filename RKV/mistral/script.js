@@ -64,6 +64,10 @@ startGame.disabled = false; //!
                                                              if(x!=X) return 1;
                                                              else     return 0;
                                       }
+                                      function partnerOf(currentPlayer){
+                                                         return (currentPlayer === gamer1Name) ? gamer2Name : gamer1Name;     
+
+                                      }
  makeTurn.addEventListener("click", 
                            ////------------on every turn--------------------------------------------
                           () => {
@@ -74,10 +78,10 @@ startGame.disabled = false; //!
 
                                     
                                     
-                                    let howManyAccountsChanged = changed(accA, A) + changed(accB, B) + changed(accC, C)                 
-                                    // Test if the current Game is over by checking if all accounts are zero
-                                    let isAllZero = (accA + accB + accC === 0)
-                                     let isCheating = (accA < 0) || (accB < 0) || (accC < 0) ||
+                                   // Test if the current Game is over by checking if all accounts are zero
+                                   let isAllZero = (accA + accB + accC === 0)
+                                   let howManyAccountsChanged = changed(accA, A) + changed(accB, B) + changed(accC, C)                 
+                                    let isCheating = (accA < 0) || (accB < 0) || (accC < 0) ||
                                                      (accA > A) || (accB > B) || (accC > C) ||
                                                       howManyAccountsChanged != 1; // Only one account should change per turn
 
@@ -86,12 +90,12 @@ startGame.disabled = false; //!
                                          if(isCheating) {
                                             gameState.innerHTML= `<h2>Cheating detected!</h2>`;
                                             looser = currentPlayer
-                                            winner = (currentPlayer === gamer1Name) ? gamer2Name : gamer1Name;     
+                                            winner = partnerOf(currentPlayer);     
                                          }   
                                          if(isAllZero) {
                                             gameState.innerHTML= `<h2>All accounts are zero!</h2>`;
                                             winner = currentPlayer
-                                            looser = (currentPlayer === gamer1Name) ? gamer2Name : gamer1Name;     
+                                            looser = partnerOf(currentPlayer);
                                          }   
                                           gameLog.innerHTML += `<span class=fired>${looser} is fired!</span><br>`;
                                           gameState.innerHTML += `<h2>${winner} wins the game! </h2> `;
@@ -116,7 +120,7 @@ startGame.disabled = false; //!
                                          // Log move
                                           let logMessage = `<p>${currentPlayer} removed coins. Accounts: A=${A}, B=${B}, C=${C}</p>` 
                                           // Switch player
-                                           currentPlayer = (currentPlayer === gamer1Name) ? gamer2Name : gamer1Name;
+                                           currentPlayer = partnerOf(currentPlayer);
                                             logMessage += `<span>Now ${currentPlayer}'s Turn </span><br>`;
                                              gameLog.innerHTML += logMessage;
                                               gameState.innerHTML = logMessage; 
@@ -145,7 +149,7 @@ startGame.disabled = false; //!
                                             gameState.innerHTML += logMessage; 
                                
                                            // Switch player
-                                           currentPlayer = (currentPlayer === gamer1Name) ? gamer2Name : gamer1Name;
+                                           currentPlayer = partnerOf(currentPlayer);
                                            logMessage = `<span>Now ${currentPlayer}'s Turn </span><br>`;
                                             gameLog.innerHTML += logMessage;
                                             gameState.innerHTML += logMessage;
