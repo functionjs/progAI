@@ -87,6 +87,13 @@ gameLog.innerHTML = `Testing gameLog ...`;
                                         A = accA;
                                         B = accB;   
                                         C = accC;   
+
+                                        //todo message about my succefull move
+                                        // ....................................
+
+                                        
+                                        //todo message about Robo1 thinking and moving
+                                        //............................................
                                         // logics for Robo1 to play smartly 
                                          if(equilibrium(A, B, C) === 0) {
                                             // Robo1 to think and to do something smart!
