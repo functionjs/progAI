@@ -1,8 +1,11 @@
 // script.js
-let currentPlayer = "Manager 1";
-let gameActive = false;
+
+
+
 
 startGame.addEventListener("click", () => {
+    currentPlayer = "Manager 1";
+    gameActive = false;
     gameActive = true;
     gameLog.textContent = `${currentPlayer}'s Turn`;
     makeTurn.disabled = false;
