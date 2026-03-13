@@ -131,3 +131,17 @@ h2 {
     border: 1px solid #bdc3c7;
     white-space: pre-wrap;
 }
+
+span {
+    font-weight: bold;
+    color: #47A73c;
+}
+span.fired {
+    font-weight: bold;
+    color: #a73c53;
+}
+
+input[type="number"] {
+    text-align: center;
+    width: 50px;
+}
