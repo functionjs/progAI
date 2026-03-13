@@ -1,15 +1,19 @@
 // script.js
+console.log("js code for Game 1 loaded");
 
+var gameActive    = false;
+var currentPlayer = "Manager 1";
 
+//adding Event Listener to button with id=startGame
+ startGame.addEventListener("click", 
+                            //// ---------------------------------------------
+                            () => {
+                                    gameActive = true;
+                                    gameLog.textContent = `${currentPlayer}'s Turn`;
+                                    makeTurn.disabled = false;
+                                  });
 
-
-startGame.addEventListener("click", () => {
-    currentPlayer = "Manager 1";
-    gameActive = false;
-    gameActive = true;
-    gameLog.textContent = `${currentPlayer}'s Turn`;
-    makeTurn.disabled = false;
-});
+ 
 
  makeTurn.addEventListener("click", () => {
     if (!gameActive) return;
@@ -33,5 +37,8 @@ startGame.addEventListener("click", () => {
     // Switch player
     currentPlayer = currentPlayer === "Manager 1" ? document.getElementById("partnerName").value : "Manager 1";
     gameLog.textContent += `${currentPlayer}'s Turn`;
+
+    
+
 });
 
