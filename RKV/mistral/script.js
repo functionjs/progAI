@@ -50,6 +50,7 @@ gameLog.innerHTML = `Testing gameLog ...`;
                                      accountB.value = B;
                                      accountC.value = C;
                                       makeTurn.disabled = false; //!
+                                      startGame.disabled = true; //!
                                   });
 
                                       function changed(X, x){
@@ -79,6 +80,7 @@ gameLog.innerHTML = `Testing gameLog ...`;
                                          winner = (currentPlayer === gamer1Name) ? gamer2Name : gamer1Name;     
                                           gameActive = false;
                                           makeTurn.disabled = true; //!
+                                          startGame.disabled = false; //!
                                            return;
                                       }
                                          
@@ -87,9 +89,17 @@ gameLog.innerHTML = `Testing gameLog ...`;
                                         A = accA;
                                         B = accB;   
                                         C = accC;   
+                                          // set new values to input fields
+                                         accountA.value = A;
+                                         accountB.value = B;
+                                         accountC.value = C;           
 
-                                        //todo message about my succefull move
-                                        // ....................................
+                                         //todo message about my succefull move
+                                         // Log move
+                                          gameLog.innerHTML += `<p>${currentPlayer} removed coins. Accounts: A=${A}, B=${B}, C=${C}</p>`;
+                                          // Switch player
+                                           currentPlayer = (currentPlayer === gamer1Name) ? gamer2Name : gamer1Name;
+                                            gameLog.innerHTML += `<span>${currentPlayer}'s Turn </span><br>`;
 
                                         
                                         //todo message about Robo1 thinking and moving
@@ -110,7 +120,7 @@ gameLog.innerHTML = `Testing gameLog ...`;
                                           accountB.value = B;
                                           accountC.value = C;           
                                            // Log move
-                                           gameLog.innerHTML += `<p>${currentPlayer} removed coins. Accounts: A=${accA}, B=${accB}, C=${accC}</p>`;
+                                           gameLog.innerHTML += `<p>${currentPlayer} removed coins. Accounts: A=${A}, B=${B}, C=${C}</p>`;
                                
                                            // Switch player
                                            currentPlayer = (currentPlayer === gamer1Name) ? gamer2Name : gamer1Name;
