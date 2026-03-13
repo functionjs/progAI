@@ -22,6 +22,7 @@ gameLog.innerHTML = `...`;
 
 makeTurn.disabled = true; //!
 startGame.disabled = false; //!
+let logMessage = ""
 
 //adding Event Listener to button with id=startGame
  startGame.addEventListener("click", 
@@ -75,8 +76,6 @@ startGame.disabled = false; //!
                                    const accA = parseInt(accountA.value);
                                    const accB = parseInt(accountB.value);
                                    const accC = parseInt(accountC.value);
-
-                                    
                                     
                                    // Test if the current Game is over by checking if all accounts are zero
                                    let isAllZero = (accA + accB + accC === 0)
@@ -96,9 +95,10 @@ startGame.disabled = false; //!
                                             gameState.innerHTML= `<h2>All accounts are zero!</h2>`;
                                             winner = currentPlayer
                                             looser = partnerOf(currentPlayer);
-                                         }   
-                                          gameLog.innerHTML += `<span class=fired>${looser} is fired!</span><br>`;
-                                          gameState.innerHTML += `<h2>${winner} wins the game! </h2> `;
+                                         }
+                                          logMessage = `<span class=fired>${looser} is fired!</span><br>`;
+                                           gameLog.innerHTML += logMessage;
+                                           gameState.innerHTML += logMessage + `<h2>${winner} wins the game! </h2> `;
                                           winnerOfGame.innerHTML = winner
                                           gameActive = false;
                                           makeTurn.disabled = true; //!
@@ -118,7 +118,7 @@ startGame.disabled = false; //!
 
                                          //todo message about my succefull move
                                          // Log move
-                                          let logMessage = `<p>${currentPlayer} removed coins. Accounts: A=${A}, B=${B}, C=${C}</p>` 
+                                          logMessage = `<p>${currentPlayer} removed coins. Accounts: A=${A}, B=${B}, C=${C}</p>` 
                                           // Switch player
                                            currentPlayer = partnerOf(currentPlayer);
                                             logMessage += `<span>Now ${currentPlayer}'s Turn </span><br>`;
