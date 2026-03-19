@@ -125,27 +125,28 @@ let logMessage = ""
                                                       howManyAccountsChanged != 1; // Only one account should change per turn
 
                                       // Player should not cheat and coins must exist
-                                      if (isCheating || sumAllZero ) {
-                                         if(isCheating) {
+                                      if (isCheating || sumAllZero ) { //end of current game round
+                                         if(isCheating) {  // cheater is looser and the other player is winner
                                             gameState.innerHTML= `<h2>Cheating detected!</h2>`;
                                             looser = currentPlayer
                                             winner = partnerOf(currentPlayer);     
                                          }   
-                                         if(sumAllZero) {
-                                            gameState.innerHTML= `<h2>All accounts are zero!</h2>`;
-                                            winner = currentPlayer
-                                            looser = partnerOf(currentPlayer);
-                                         }
-                                          logMessage = `<span class=fired>${gamer[looser]} is fired!</span><br>`;
-                                           gameLog.innerHTML   += logMessage;
-                                           gameState.innerHTML += logMessage + `<h2>${gamer[winner]} wins the game! </h2> `;
-                                          winnerOfGame.innerHTML = gamer[winner]
-                                          gameActive = false;
-                                          makeTurn.disabled = true; //!
-                                          startGame.disabled = false; //!
-                                          playerName.disabled = false; //!
-                                          partnerName.disabled = false; //!
-                                           return;
+                                         else // if(sumAllZero) // current player is winner and the other player is looser
+                                            {
+                                              gameState.innerHTML= `<h2>All accounts are zero!</h2>`;
+                                              winner = currentPlayer
+                                              looser = partnerOf(currentPlayer);
+                                            }
+                                           logMessage = `<span class=fired>${gamer[looser]} is fired!</span><br>`;
+                                            gameLog.innerHTML   += logMessage;
+                                            gameState.innerHTML += logMessage + `<h2>${gamer[winner]} wins the game! </h2> `;
+                                           winnerOfGame.innerHTML = gamer[winner]
+                                           gameActive = false;
+                                           makeTurn.disabled = true; //!
+                                           startGame.disabled = false; //!
+                                           playerName.disabled = false; //!
+                                           partnerName.disabled = false; //!
+                                            return;
                                       }
                                         // do move
                                         A = accA;
@@ -208,13 +209,13 @@ let logMessage = ""
                                           accountB.value = B;
                                           accountC.value = C;           
                                            // Log move
-                                           logMessage = `<p>${currentPlayer} removed coins. Accounts: A=${A}, B=${B}, C=${C}</p>`
+                                           logMessage = `<p>${gamer[currentPlayer]} removed coins. Accounts: A=${A}, B=${B}, C=${C}</p>`
                                             gameLog.innerHTML += logMessage;
                                             gameState.innerHTML += logMessage; 
                                
                                            // Switch player
                                            currentPlayer = partnerOf(currentPlayer);
-                                           logMessage = `<span>Now ${currentPlayer}'s Turn </span><br>`;
+                                           logMessage = `<span>Now ${gamer[currentPlayer]}'s Turn </span><br>`;
                                             gameLog.innerHTML += logMessage;
                                             gameState.innerHTML += logMessage;
                                
