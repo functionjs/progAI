@@ -1,64 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crisis Management 💰</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <h1>Crisis Management 💰</h1>
-    <center>
-    <img src="https://private-user-images.githubusercontent.com/38524934/554996571-bf0ee303-26ee-4a39-9a69-06b5c9205b82.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NzM0MjU1NzcsIm5iZiI6MTc3MzQyNTI3NywicGF0aCI6Ii8zODUyNDkzNC81NTQ5OTY1NzEtYmYwZWUzMDMtMjZlZS00YTM5LTlhNjktMDZiNWM5MjA1YjgyLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNjAzMTMlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjYwMzEzVDE4MDc1N1omWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWFhOTI5ZDU2YzY0YzliZjRkNDdkN2U5YmE0NmQ1ZDQ1NjI4OWU2NzZiM2VkMTM1NDdlOWUyNWM4YjQ3MWRkZjcmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.lzvtfMEaHWuN5cwZ8eWeGm-4O4NrYOo9fpqC4xARPXs" width="200">
-    </center>
-    <h2>Author: {Your First and Last Name}</h2>
 
-    <div class="legend">
-        <h3>Game Legend</h3>
-        <p>
-            A small financial company is experiencing a crisis. The director decides to transfer all amounts to Bitcoin and fire the stupidest manager.
-            Managers take turns transferring money from accounts. The one who can't transfer or violates the protocol is fired.
-        </p>
-    </div>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Crisis Management 💰</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
 
-    <div class="game-setup">
-        <label for="playerName">Your Name:</label>
-        <input type="text" id="playerName" placeholder="Enter your name">
-
-        <label for="partnerName">Partner Name:</label>
-        <input type="text" id="partnerName" placeholder="Enter partner name (Robo1, Robo2, Robo3)">
-
-        <div class="accounts">
-            <label for="accountA">Account A:</label>
-            <input type="number" id="accountA" placeholder="Coins in A">
-
-            <label for="accountB">Account B:</label>
-            <input type="number" id="accountB" placeholder="Coins in B">
-
-            <label for="accountC">Account C:</label>
-            <input type="number" id="accountC" placeholder="Coins in C">
+    <body>
+        <header>
+         <h1>Crisis Management 💰</h1>
+         <center>
+         <img src="https://hackmd.io/_uploads/rJInZpdc-g.png" width="200">
+         </center>
+         <h2>Author: {Your First and Last Name}</h2>
+        </header>
+    
+        <div class="legend">
+            <h3>Game Legend</h3>
+            <p>
+                A small financial company is experiencing a crisis. The director decides to transfer all amounts to Bitcoin and fire the stupidest manager.
+                Managers take turns transferring money from accounts. The one who can't transfer or violates the protocol is fired.
+            </p>
         </div>
- 
-    <hr>
-        <button id="startGame">Start Game</button>
-        <button id="makeTurn">Make Turn</button>
-    </div>
-
-    <div class="game-state">
-        <h3>Game State</h3>
-        <pre id="gameState"></pre>
-    </div>
-
-    <div class="winner">
-        <h3>Winner</h3>
-        <pre id="winnerOfGame"></pre>
-    </div>
-
-    <div class="log">
-        <h3>Log</h3>
-        <div id="gameLog">...</div>
-    </div>
-
-    <script src="script.js"></script>
-</body>
+    
+        <div class="game-setup">
+            <label for="playerName">Your Name:</label>
+            <input type="text" id="playerName" placeholder="Enter your name">
+             <label for="partnerName">Partner Name:</label>
+             <input type="text" id="partnerName" placeholder="Enter partner name (Robo1, Robo2, Robo3)">
+        
+         <hr>
+            <button id="startGame">Start Game</button>
+         <hr>   
+        
+            <div class="accounts">
+                <label for="accountA">Account A:</label>
+                <input type="number" id="accountA" placeholder="Coins in A">
+                 <label for="accountB">Account B:</label>
+                 <input type="number" id="accountB" placeholder="Coins in B">
+                  <label for="accountC">Account C:</label>
+                  <input type="number" id="accountC" placeholder="Coins in C">
+                   <button id="makeTurn">Make Turn</button>
+            </div>
+        
+        
+        </div>
+    
+        <div class="game-state">
+            <h3>Game State</h3>
+            <pre id="gameState"></pre>
+        </div>
+    
+        <div class="winner">
+            <h3>Winner</h3>
+            <pre id="winnerOfGame"></pre>
+        </div>
+    
+        <div class="log">
+            <h3>Log</h3>
+            <div id="gameLog">...</div>
+        </div>
+    
+        <script src="script.js"></script>
+    </body>
 </html>
