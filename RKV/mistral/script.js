@@ -11,7 +11,10 @@ var currentPlayer = 0 ; // Will hold index of the  name of the current player: g
 var A,B,C; // Account balances
 
 var gamer00   //  = Gamer0  Behaviour; 
-var gamer01   // =  Gamer1  Behaviour;                                      
+var gamer01   // =  Gamer1  Behaviour;  
+//  handler references
+var handler00 = null;
+var handler01 = null;                                   
    
 
 gameLog.innerHTML = `...`;   
@@ -140,34 +143,7 @@ let createGamerBehaviour = function(howGetAndSetAccount) { // This function crea
                                     let isCheating = (accA < 0) || (accB < 0) || (accC < 0) ||
                                                      (accA > A) || (accB > B) || (accC > C) ||
                                                       howManyAccountsChanged != 1; // Only one account should change per turn
-
-                                      // Player should not cheat and coins must exist
-                                      if (isCheating || sumAllZero ) { //end of current game round
-                                         if(isCheating) {  // cheater is looser and the other player is winner
-                                            gameState.innerHTML= `<h2>Cheating detected!</h2>`;
-                                            looser = currentPlayer
-                                            winner = partnerOf(currentPlayer);     
-                                         }   
-                                         else // if(sumAllZero) // current player is winner and the other player is looser
-                                            {
-                                              gameState.innerHTML= `<h2>All accounts are zero!</h2>`;
-                                              winner = currentPlayer
-                                              looser = partnerOf(currentPlayer);
-                                            }
-                                           logMessage = `<span class=fired>${gamer[looser]} is fired!</span><br>`;
-                                            gameLog.innerHTML   += logMessage;
-                                            gameState.innerHTML += logMessage + `<h2>${gamer[winner]} wins the game! </h2> `;
-                                           winnerOfGame.innerHTML = gamer[winner]
-                                           gameActive = false;
-                                           
-                                           startGame.disabled = false; //!
-                                           playerName.disabled = false; //!
-                                           partnerName.disabled = false; //!
-                                           makeTurnGamer2.disabled =true;
-                                           makeTurnGamer1.disabled =true;
-                                            return;
-                                      }
-                                        // do move
+                                                                              // do move
                                         A = accA;
                                         B = accB;   
                                         C = accC;   
@@ -178,10 +154,37 @@ let createGamerBehaviour = function(howGetAndSetAccount) { // This function crea
 
                                          //todo message about my succefull move
                                          // Log move
-                                          logMessage = `<p>${gamer[currentPlayer]} removed coins. Accounts: A=${A}, B=${B}, C=${C}</p>` 
+                                          logMessage = ` ${gamer[currentPlayer]} removed coins. Current accounts: A=${A}, B=${B}, C=${C}` 
+                                           gameLog.innerHTML += logMessage;
+                                      // Player should not cheat and coins must exist
+                                      if (isCheating || sumAllZero ) { //end of current game round
+                                         if(isCheating) {  // cheater is looser and the other player is winner
+                                            gameState.innerHTML= `<h3>Cheating detected!</h3>`;
+                                            looser = currentPlayer
+                                            winner = partnerOf(currentPlayer);     
+                                         }   
+                                         else // if(sumAllZero) // current player is winner and the other player is looser
+                                            {
+                                              gameState.innerHTML= `<h3>All accounts are zero!</h3>`;
+                                              winner = currentPlayer
+                                              looser = partnerOf(currentPlayer);
+                                            }
+                                           logMessage = `<span class=fired> ${gamer[looser]} is fired!</span>`;
+                                            gameLog.innerHTML   += logMessage;
+                                            gameState.innerHTML += logMessage + `<h2>${gamer[winner]} wins the game! </h2> `;
+                                           gameActive = false;
+                                           
+                                           startGame.disabled = false; //!
+                                           playerName.disabled = false; //!
+                                           partnerName.disabled = false; //!
+                                           makeTurnGamer2.disabled =true;
+                                           makeTurnGamer1.disabled =true;
+                                            return;
+                                      }
+
                                           // Switch player
                                            currentPlayer = partnerOf(currentPlayer);
-                                            logMessage += `<span>Now ${gamer[currentPlayer]}'s Turn </span><br>`;
+                                            logMessage = `<br><span>  Now ${gamer[currentPlayer]}'s Turn </span>`;
                                              gameLog.innerHTML += logMessage;
                                               gameState.innerHTML = logMessage; 
 
@@ -215,22 +218,28 @@ let createGamerBehaviour = function(howGetAndSetAccount) { // This function crea
                                           else if(gamer1Name === "Robo3")gamer01 = createGamerBehaviour(getAccountsFromRobo3); 
                                                 else   gamer01   = createGamerBehaviour(getAccountsFromHTML); 
                                                 
-                                      makeTurnGamer1.addEventListener("click", gamer00 ) ;
-                                      makeTurnGamer2.addEventListener("click", gamer01 ) ;
+                                       // WITH these four lines:
+                                      if (handler00) makeTurnGamer1.removeEventListener("click", handler00); // remove old
+                                      if (handler01) makeTurnGamer2.removeEventListener("click", handler01); // remove old
 
+                                         handler00 = gamer00;  // save reference
+                                         handler01 = gamer01;
+
+                                          makeTurnGamer1.addEventListener("click", handler00); // add fresh
+                                          makeTurnGamer2.addEventListener("click", handler01); // add fresh
 
                                     gameNumber++;
                                     if(gameNumber%2==0){makeTurnGamer1.disabled =false; makeTurnGamer2.disabled =true;}
                                        else            {makeTurnGamer1.disabled =true; makeTurnGamer2.disabled =false;}
                                            
-                                    let startMessage = `<h1>New Game Started! </h1> Game Number: ${gameNumber} <br>`;
+                                    let startMessage = `<h5> Game Number: ${gameNumber} Started! </h5>`;
                                      gameLog.innerHTML = startMessage;
 
                                     currentPlayer = gameNumber % 2 // currentPlayer will alternate between 0 and 1 for each new game, ensuring that the starting player changes every game.
-                                     let currPlayerMessage = `<span>${gamer[currentPlayer]}'s Turn </span><br>`;
+                                     let currPlayerMessage = `<span>${gamer[currentPlayer]}'s Turn </span>`;
                                       gameLog.innerHTML += currPlayerMessage;
                                       gameState.innerHTML= startMessage + currPlayerMessage;
-                                      winnerOfGame.innerHTML = ""; // Clear previous winner
+                                      
 
                                     A = generateRandomMoney(1, 10);
                                     B = generateRandomMoney(1, 10);
