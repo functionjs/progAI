@@ -64,11 +64,13 @@ var logMessage = ""
                                       }
 
                                           function getAccountsFromHTML(){// Get current account values from HTML input fields
+                                                   console.log("Getting accounts from HTML");
                                                    return [ parseInt(accountA.value), parseInt(accountB.value), parseInt(accountC.value)];
                                           }
                                       function getAccountsFromRobo1(){// Get current account values from HTML input fields and apply
                                                                       // logics for Robo1 to play "smart" (dumb version: just play random moves) 
                                               [accA, accB, accC] = [A,B,C] 
+                                               console.log("Getting accounts from Robo1 logic: ", accA, accB, accC);
                                                if(equilibrium(accA, accB, accC) === 0) {
                                                   // Robo1 to draw the Game!
                                                   if(accA > 0) accA--;
@@ -84,6 +86,7 @@ var logMessage = ""
                                       function getAccountsFromRobo2(){// Get current account values from HTML input fields and apply
                                                                       // logics for Robo2 to play near smart (not dumb version) 
                                               [accA, accB, accC] = [A,B,C] 
+                                                console.log("Getting accounts from Robo2 logic: ", accA, accB, accC);
                                                if(equilibrium(accA, accB, accC) === 0) {
                                                   // Robo2 to tie the Game!
                                                  /* 
@@ -105,6 +108,7 @@ var logMessage = ""
                                       function getAccountsFromRobo3(){// Get current account values from HTML input fields and apply
                                                                       // logics for Robo3 to play  absolute smart!
                                               [accA, accB, accC] = [A,B,C] 
+                                                console.log("Getting accounts from Robo3 logic: ", accA, accB, accC);
                                                if(equilibrium(accA, accB, accC) === 0) {
                                                   // Robo3 to tie the Game!
                                                  /* 
@@ -211,7 +215,9 @@ let createGamerBehaviour = function(howGetAndSetAccount) { // This function crea
                                           else if(gamer1Name === "Robo3")gamer01 = createGamerBehaviour(getAccountsFromRobo3); 
                                                 else   gamer01   = createGamerBehaviour(getAccountsFromHTML); 
                                                 
-  
+                                      makeTurnGamer1.addEventListener("click", gamer00 ) ;
+                                      makeTurnGamer2.addEventListener("click", gamer01 ) ;
+
 
                                     gameNumber++;
                                     if(gameNumber%2==0){makeTurnGamer1.disabled =false; makeTurnGamer2.disabled =true;}
@@ -239,8 +245,6 @@ let createGamerBehaviour = function(howGetAndSetAccount) { // This function crea
                                   });
 
  
- makeTurnGamer1.addEventListener("click", gamer00 ) ;
- makeTurnGamer2.addEventListener("click", gamer01 ) ;
  
 
 
