@@ -208,14 +208,14 @@ let createGamerBehaviour = function(howGetAndSetAccount) { // This function crea
                                     if(partnerName.value.trim() == "")partnerName.value = gamer1Name;
                                        else                           {gamer1Name = partnerName.value; gamer[1] = gamer1Name;}
 
-                                     if(gamer0Name === "Robo1")gamer00 = createGamerBehaviour(getAccountsFromRobo1); 
-                                     else if(gamer0Name === "Robo2")gamer00 = createGamerBehaviour(getAccountsFromRobo2); 
-                                          else if(gamer0Name === "Robo3")gamer00 = createGamerBehaviour(getAccountsFromRobo3); 
+                                     if(gamer0Name.startsWith("Robo1")){gamer00 = createGamerBehaviour(getAccountsFromRobo1); }
+                                     else if(gamer0Name.startsWith("Robo2"))gamer00 = createGamerBehaviour(getAccountsFromRobo2); 
+                                          else if(gamer0Name.startsWith("Robo3"))gamer00 = createGamerBehaviour(getAccountsFromRobo3); 
                                                 else   gamer00   = createGamerBehaviour(getAccountsFromHTML); 
 
-                                     if(gamer1Name === "Robo1")gamer01 = createGamerBehaviour(getAccountsFromRobo1); 
-                                     else if(gamer1Name === "Robo2")gamer01 = createGamerBehaviour(getAccountsFromRobo2); 
-                                          else if(gamer1Name === "Robo3")gamer01 = createGamerBehaviour(getAccountsFromRobo3); 
+                                     if(gamer1Name.startsWith("Robo1"))gamer01 = createGamerBehaviour(getAccountsFromRobo1); 
+                                     else if(gamer1Name.startsWith("Robo2"))gamer01 = createGamerBehaviour(getAccountsFromRobo2); 
+                                          else if(gamer1Name.startsWith("Robo3"))gamer01 = createGamerBehaviour(getAccountsFromRobo3); 
                                                 else   gamer01   = createGamerBehaviour(getAccountsFromHTML); 
                                                 
                                        // WITH these four lines:
