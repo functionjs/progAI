@@ -10,13 +10,26 @@ var gameActive    = false;
 var currentPlayer = 0 ; // Will hold index of the  name of the current player: gamer0Name or gamer1Name; currentPlayer ^ 1 will give the index of the other player  
 var A,B,C; // Account balances
 
-   function generateRandomAccount(from, to) {
-       return Math.round(from + Math.random() * (to - from));
-   }
+var gamer00   //  = Gamer0  Behaviour; 
+var gamer01   // =  Gamer1  Behaviour;                                      
+   
 
-   // Equilibrium function
-    function equilibrium(a, b, c) {
-                                      return a ^ b ^ c; // XOR operation to determine if the current state is a winning position (non-zero) or losing position (zero)
+gameLog.innerHTML = `...`;   
+
+makeTurnGamer2.disabled = true; //!
+makeTurnGamer1.disabled = true; //!
+startGame.disabled = false; //!
+var logMessage = ""
+
+
+
+                                      function generateRandomMoney(min, max){
+                                                 return min + Math.floor(Math.random() * (max - min + 1)) ;
+                                      }
+
+                                      // Equilibrium function
+                                      function equilibrium(a, b, c) {
+                                          return a ^ b ^ c; // XOR operation to determine if the current state is a winning position (non-zero) or losing position (zero)
                                                         // 3 ^ 2 = 1 (winning position)
                                                         // 1 ^ 2 = 3 (winning position)
                                                         // 3 ^ 1 = 2 (winning position)
@@ -40,64 +53,22 @@ var A,B,C; // Account balances
                                                         // -------- XOR
                                                         // 1 : 001
 
-    }
+                                        }
 
-gameLog.innerHTML = `...`;   
-
-makeTurn.disabled = true; //!
-startGame.disabled = false; //!
-let logMessage = ""
-
-//adding Event Listener to button with id=startGame
- startGame.addEventListener("click", 
-                            //// ------------Start Game------------------------------
-                            () => {
-                                    gameActive = true;
-
-                                    if(playerName.value.trim() == "") playerName.value = gamer0Name;
-                                       else                           {gamer0Name = playerName.value; gamer[0] = gamer0Name;}
-
-                                    if(partnerName.value.trim() == "")partnerName.value = gamer1Name;
-                                       else                           {gamer1Name = partnerName.value; gamer[1] = gamer1Name;}
-                                          
-
-                                    gameNumber++;
-                                    let startMessage = `<h1>New Game Started! </h1> Game Number: ${gameNumber} <br>`;
-                                     gameLog.innerHTML = startMessage;
-
-                                    currentPlayer = gameNumber % 2 // currentPlayer will alternate between 0 and 1 for each new game, ensuring that the starting player changes every game.
-                                     let currPlayerMessage = `<span>${gamer[currentPlayer]}'s Turn </span><br>`;
-                                      gameLog.innerHTML += currPlayerMessage;
-                                      gameState.innerHTML= startMessage + currPlayerMessage;
-                                      winnerOfGame.innerHTML = ""; // Clear previous winner
-
-                                    A = generateRandomAccount(1, 10);
-                                    B = generateRandomAccount(1, 10);
-                                    C = generateRandomAccount(1, 10);
-                                     accountA.value = A;
-                                     accountB.value = B;
-                                     accountC.value = C;
-                                      makeTurn.disabled = false; //!
-                                      startGame.disabled = true; //!
-                                      playerName.disabled = true; //!
-                                      partnerName.disabled = true; //!
-                                  });
-
-                                      function changed(X, x){
+                                      function changed(X, x){// Check if the value X has changed relative to value x
                                                              if(x!=X) return 1;
                                                              else     return 0;
                                       }
-                                      function partnerOf(currentPlayerIndex){
+                                      function partnerOf(currentPlayerIndex){// Get the index of the other player
                                                          return currentPlayerIndex ^ 1;
                                       }
 
-                                      function getAccountsFromHTML(){
-                                        return [ parseInt(accountA.value), parseInt(accountB.value), parseInt(accountC.value)];
-                                      }
-
-                                      function getAccountsFromRobo1(){
-                                        // logics for Robo1 to play "smart" 
-                                              [accA, accB, accC] = getAccountsFromHTML(); 
+                                          function getAccountsFromHTML(){// Get current account values from HTML input fields
+                                                   return [ parseInt(accountA.value), parseInt(accountB.value), parseInt(accountC.value)];
+                                          }
+                                      function getAccountsFromRobo1(){// Get current account values from HTML input fields and apply
+                                                                      // logics for Robo1 to play "smart" (dumb version: just play random moves) 
+                                              [accA, accB, accC] = [A,B,C] 
                                                if(equilibrium(accA, accB, accC) === 0) {
                                                   // Robo1 to draw the Game!
                                                   if(accA > 0) accA--;
@@ -105,17 +76,59 @@ let logMessage = ""
                                                        else if(accC > 0) accC--;
                                                }    
                                                else // Robo1 to play random moves
-                                                    if(accA > 0) accA = generateRandomAccount(0, accA-1);
-                                                    else if(accB > 0) accB = generateRandomAccount(0, accB-1);
-                                                         else if(accC > 0) accC = generateRandomAccount(0, accC-1);
+                                                    if(accA > 0) accA = generateRandomMoney(0, accA-1);
+                                                    else if(accB > 0) accB = generateRandomMoney(0, accB-1);
+                                                         else if(accC > 0) accC = generateRandomMoney(0, accC-1);
+                                                 return [ accA, accB, accC];
+                                      }
+                                      function getAccountsFromRobo2(){// Get current account values from HTML input fields and apply
+                                                                      // logics for Robo2 to play near smart (not dumb version) 
+                                              [accA, accB, accC] = [A,B,C] 
+                                               if(equilibrium(accA, accB, accC) === 0) {
+                                                  // Robo2 to tie the Game!
+                                                 /* 
+                                                  if(accA > 0) accA--;
+                                                  else if(accB > 0) accB--;
+                                                       else if(accC > 0) accC--;
+                                                 */       
+                                               }    
+                                               else // Robo2 to play near optimal moves
+                                                    {
+                                                     /* 
+                                                     if(accA > 0) accA = generateRandomMoney(0, accA-1);
+                                                     else if(accB > 0) accB = generateRandomMoney(0, accB-1);
+                                                         else if(accC > 0) accC = generateRandomMoney(0, accC-1);
+                                                     */    
+                                                    }      
+                                                 return [ accA, accB, accC];
+                                      }
+                                      function getAccountsFromRobo3(){// Get current account values from HTML input fields and apply
+                                                                      // logics for Robo3 to play  absolute smart!
+                                              [accA, accB, accC] = [A,B,C] 
+                                               if(equilibrium(accA, accB, accC) === 0) {
+                                                  // Robo3 to tie the Game!
+                                                 /* 
+                                                  if(accA > 0) accA--;
+                                                  else if(accB > 0) accB--;
+                                                       else if(accC > 0) accC--;
+                                                 */       
+                                               }    
+                                               else // Robo3 to play  optimal moves!
+                                                    {
+                                                     /* 
+                                                     if(accA > 0) accA = generateRandomMoney(0, accA-1);
+                                                     else if(accB > 0) accB = generateRandomMoney(0, accB-1);
+                                                         else if(accC > 0) accC = generateRandomMoney(0, accC-1);
+                                                     */    
+                                                    }      
                                                  return [ accA, accB, accC];
                                       }
 
- makeTurn.addEventListener("click", 
-                           ////------------on every turn--------------------------------------------
-                          () => {
+let createGamerBehaviour = function(howGetAndSetAccount) { // This function creates a behavior for a gamer based on the provided method for getting and setting account values.
+                           let getAndSetAccount = howGetAndSetAccount; // closure to hold the method for getting and setting account values, allowing for different behaviors for different gamers (e.g., human player vs. Robo1).
+                            return function() { 
                                  // Get input values
-                                 [accA, accB , accC] = getAccountsFromHTML()
+                                 [accA, accB , accC] = getAndSetAccount()
                                     
                                    // Test if the current Game is over by checking if all accounts are zero
                                    let sumAllZero = (accA + accB + accC === 0)
@@ -142,10 +155,12 @@ let logMessage = ""
                                             gameState.innerHTML += logMessage + `<h2>${gamer[winner]} wins the game! </h2> `;
                                            winnerOfGame.innerHTML = gamer[winner]
                                            gameActive = false;
-                                           makeTurn.disabled = true; //!
+                                           
                                            startGame.disabled = false; //!
                                            playerName.disabled = false; //!
                                            partnerName.disabled = false; //!
+                                           makeTurnGamer2.disabled =true;
+                                           makeTurnGamer1.disabled =true;
                                             return;
                                       }
                                         // do move
@@ -165,61 +180,68 @@ let logMessage = ""
                                             logMessage += `<span>Now ${gamer[currentPlayer]}'s Turn </span><br>`;
                                              gameLog.innerHTML += logMessage;
                                               gameState.innerHTML = logMessage; 
-                                        
-                                              //todo message about Robo1 thinking and moving
-                                              //............................................
-                                               // logics for Robo1 to play "smart" 
-                                              [accA, accB, accC] = getAccountsFromRobo1();
-                                                // Test if the current Game is over by checking if all accounts are zero
-                                                sumAllZero = (accA + accB + accC === 0)
-                                                howManyAccountsChanged = changed(accA, A) + changed(accB, B) + changed(accC, C)                 
-                                                isCheating = (accA < 0) || (accB < 0) || (accC < 0) ||
-                                                             (accA > A) || (accB > B) || (accC > C) ||
-                                                              howManyAccountsChanged != 1; // Only one account should change per turn
 
-                                                  // Player should not cheat and coins must exist
-                                                  if (isCheating || sumAllZero ) {
-                                                     if(isCheating) {
-                                                                      gameState.innerHTML= `<h2>Cheating detected!</h2>`;
-                                                                      looser = currentPlayer
-                                                                      winner = partnerOf(currentPlayer);     
-                                                      }   
-                                          if(sumAllZero) {
-                                            gameState.innerHTML= `<h2>All accounts are zero!</h2>`;
-                                            winner = currentPlayer
-                                            looser = partnerOf(currentPlayer);
-                                         }
-                                          logMessage = `<span class=fired>${gamer[looser]} is fired!</span><br>`;
-                                           gameLog.innerHTML += logMessage;
-                                           gameState.innerHTML += logMessage + `<h2>${gamer[winner]} wins the game! </h2> `;
-                                           winnerOfGame.innerHTML = gamer[winner] 
-                                           gameActive = false;
-                                           makeTurn.disabled = true; //!
-                                           startGame.disabled = false; //!
-                                           playerName.disabled = false; //!
-                                           partnerName.disabled = false; //!
-                                            return;
-                                      }   
-                                       // do move
-                                        A = accA;
-                                        B = accB;   
-                                        C = accC;       
-                                          // set new values to input fields
-                                          accountA.value = A;
-                                          accountB.value = B;
-                                          accountC.value = C;           
-                                           // Log move
-                                           logMessage = `<p>${gamer[currentPlayer]} removed coins. Accounts: A=${A}, B=${B}, C=${C}</p>`
-                                            gameLog.innerHTML += logMessage;
-                                            gameState.innerHTML += logMessage; 
-                               
-                                           // Switch player
-                                           currentPlayer = partnerOf(currentPlayer);
-                                           logMessage = `<span>Now ${gamer[currentPlayer]}'s Turn </span><br>`;
-                                            gameLog.innerHTML += logMessage;
-                                            gameState.innerHTML += logMessage;
-                               
-                                   
+                                          if(makeTurnGamer1.disabled){makeTurnGamer1.disabled =false; makeTurnGamer2.disabled =true;}
+                                                     else            {makeTurnGamer1.disabled =true; makeTurnGamer2.disabled =false;}    
+                            }
+}
 
-                                 });
+
+
+ 
+//adding Event Listener to button with id=startGame
+ startGame.addEventListener("click", 
+                            //// ------------Start Game------------------------------
+                            () => {
+                                    gameActive = true;
+
+                                    if(playerName.value.trim() == "") playerName.value = gamer0Name;
+                                       else                           {gamer0Name = playerName.value; gamer[0] = gamer0Name;}
+
+                                    if(partnerName.value.trim() == "")partnerName.value = gamer1Name;
+                                       else                           {gamer1Name = partnerName.value; gamer[1] = gamer1Name;}
+
+                                     if(gamer0Name === "Robo1")gamer00 = createGamerBehaviour(getAccountsFromRobo1); 
+                                     else if(gamer0Name === "Robo2")gamer00 = createGamerBehaviour(getAccountsFromRobo2); 
+                                          else if(gamer0Name === "Robo3")gamer00 = createGamerBehaviour(getAccountsFromRobo3); 
+                                                else   gamer00   = createGamerBehaviour(getAccountsFromHTML); 
+
+                                     if(gamer1Name === "Robo1")gamer01 = createGamerBehaviour(getAccountsFromRobo1); 
+                                     else if(gamer1Name === "Robo2")gamer01 = createGamerBehaviour(getAccountsFromRobo2); 
+                                          else if(gamer1Name === "Robo3")gamer01 = createGamerBehaviour(getAccountsFromRobo3); 
+                                                else   gamer01   = createGamerBehaviour(getAccountsFromHTML); 
+                                                
+  
+
+                                    gameNumber++;
+                                    if(gameNumber%2==0){makeTurnGamer1.disabled =false; makeTurnGamer2.disabled =true;}
+                                       else            {makeTurnGamer1.disabled =true; makeTurnGamer2.disabled =false;}
+                                           
+                                    let startMessage = `<h1>New Game Started! </h1> Game Number: ${gameNumber} <br>`;
+                                     gameLog.innerHTML = startMessage;
+
+                                    currentPlayer = gameNumber % 2 // currentPlayer will alternate between 0 and 1 for each new game, ensuring that the starting player changes every game.
+                                     let currPlayerMessage = `<span>${gamer[currentPlayer]}'s Turn </span><br>`;
+                                      gameLog.innerHTML += currPlayerMessage;
+                                      gameState.innerHTML= startMessage + currPlayerMessage;
+                                      winnerOfGame.innerHTML = ""; // Clear previous winner
+
+                                    A = generateRandomMoney(1, 10);
+                                    B = generateRandomMoney(1, 10);
+                                    C = generateRandomMoney(1, 10);
+                                     accountA.value = A;
+                                     accountB.value = B;
+                                     accountC.value = C;
+
+                                      startGame.disabled = true; //!
+                                      playerName.disabled = true; //!
+                                      partnerName.disabled = true; //!
+                                  });
+
+ 
+ makeTurnGamer1.addEventListener("click", gamer00 ) ;
+ makeTurnGamer2.addEventListener("click", gamer01 ) ;
+ 
+
+
 
