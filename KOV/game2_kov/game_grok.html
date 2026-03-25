@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crisis Management 💰</title>
+    <script src="javascript_grok.js"></script>
+    <link rel="stylesheet" href="style_grok.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Crisis Management 💰</h1>
+      <h2>Author: Oleg and Grok</h2>
+
+      <p>
+        <strong>Legend:</strong> A small financial company is in crisis.
+        Managers take turns transferring any positive amount from one account to the blockchain.
+        The manager who <strong>cannot move</strong> (all accounts zero) is <strong>fired</strong>.
+        Strategy: maintain <em>XOR-equilibrium = 0</em> after your move to put the opponent in a losing position!
+      </p>
+
+      <img
+        src="https://github.com/user-attachments/assets/bf0ee303-26ee-4a39-9a69-06b5c9205b82"
+        alt="Crisis Management Illustration"
+        width="500"
+      />
+
+      <!-- SETUP -->
+      <div id="setupArea">
+        <div class="mode-tabs">
+          <div class="mode-tab active" id="tab-bot" onclick="selectMode('bot')">⚡ VS Bot</div>
+          <div class="mode-tab"        id="tab-pvp" onclick="selectMode('pvp')">👥 2 Players</div>
+        </div>
+
+        <div>
+          <label><strong>Your Name:</strong></label>
+          <input id="playerName" type="text" value="Oleg" style="width:150px" />
+
+          <label id="opp-label" style="margin-left:20px"><strong>Opponent (Robo1 / Robo2 / Robo3):</strong></label>
+          <input id="partnerName" type="text" value="Robo3" style="width:160px" />
+        </div>
+        <div style="font-size:0.85em;color:#88cc88;margin:4px 0">
+          <strong>Robo1</strong> — random &nbsp;·&nbsp;
+          <strong>Robo2</strong> — smart with ~20% mistakes &nbsp;·&nbsp;
+          <strong>Robo3</strong> — perfect play
+        </div>
+
+        <h3>Initial Accounts (coins)</h3>
+        <div>
+          <label>A: </label><input id="initA" type="number" value="5" min="0" max="99" style="width:80px"/>
+          <label>B: </label><input id="initB" type="number" value="7" min="0" max="99" style="width:80px"/>
+          <label>C: </label><input id="initC" type="number" value="3" min="0" max="99" style="width:80px"/>
+        </div>
+        <div style="margin:8px 0">
+          <button id="startBtn">🚀 START GAME</button>
+          <button onclick="randomAccounts(false)" style="background:#334433;color:#aaffaa;border:1px solid #00ff9d">⚄ Random</button>
+          <button onclick="randomAccounts(true)"  style="background:#334433;color:#aaffaa;border:1px solid #ffd700">🎯 Fair Start (XOR≠0)</button>
+        </div>
+      </div>
+
+      <!-- GAME AREA -->
+      <div id="gameArea" style="display:none; margin-top:20px">
+
+        <!-- Scoreboard -->
+        <div class="scoreboard">
+          <div class="score-box">
+            <div class="s-name" id="s1-name">P1</div>
+            <div class="s-val"  id="s1-score">0</div>
+          </div>
+          <div style="display:flex;align-items:center;font-size:1.4em;color:#556655">VS</div>
+          <div class="score-box">
+            <div class="s-name" id="s2-name">P2</div>
+            <div class="s-val"  id="s2-score">0</div>
+          </div>
+        </div>
+
+        <h2>Current Game State</h2>
+
+        <!-- Accounts — clickable -->
+        <div class="accounts" id="accountsDisplay">
+          <div class="account selected" id="card0" onclick="selectAccount(0)">
+            <strong>A</strong><br/><span id="valA" class="money">0</span>
+          </div>
+          <div class="account" id="card1" onclick="selectAccount(1)">
+            <strong>B</strong><br/><span id="valB" class="money">0</span>
+          </div>
+          <div class="account" id="card2" onclick="selectAccount(2)">
+            <strong>C</strong><br/><span id="valC" class="money">0</span>
+          </div>
+        </div>
+
+        <div class="xor" id="xorDisplay">Equilibrium (XOR): <strong id="xorVal">0</strong></div>
+        <div class="status" id="turnDisplay">Your turn</div>
+        <div id="winnerDisplay"></div>
+
+        <h3>Your Move — Transfer to Blockchain</h3>
+        <div>
+          <strong>Account:</strong>
+          <select id="accSelect">
+            <option value="0">A</option>
+            <option value="1">B</option>
+            <option value="2">C</option>
+          </select>
+        </div>
+        <div class="amount-row">
+          <strong>Amount:</strong>
+          <input type="range" id="moveSlider" min="1" max="1" value="1" oninput="syncAmount('slider')"/>
+          <input id="moveAmount" type="number" min="1" value="1" style="width:90px" oninput="syncAmount('input')"/>
+        </div>
+        <div>
+          <button class="quick-btn" onclick="setQuick(1)">Min (1)</button>
+          <button class="quick-btn" onclick="setQuick('half')">Half</button>
+          <button class="quick-btn" onclick="setQuick('all')">All</button>
+        </div>
+
+        <div style="margin-top:14px">
+          <button id="moveBtn">💸 MAKE TURN</button>
+          <button onclick="showHint()" id="hintBtn">💡 Hint</button>
+          <button id="undoBtn" onclick="undoMove()" style="display:none">↩ Undo</button>
+        </div>
+
+        <div class="hint-box" id="hintBox"></div>
+
+        <h3>Move Log</h3>
+        <div id="log" class="log"></div>
+
+        <button onclick="resetGame()" style="background:#cc0000;color:white;margin-top:10px">🔄 NEW GAME</button>
+      </div>
+    </div>
+  </body>
+</html>
