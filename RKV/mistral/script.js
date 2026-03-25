@@ -3,18 +3,18 @@ console.log("js code for Game 1 loaded");
 
 // Game State variables
 var gamer0Name = "Manager1";
-var gamer1Name = "🤖1";
+var gamer1Name = "Robo1🤖";
 var gamer = [gamer0Name, gamer1Name];
+var currentPlayer = 0 ; // Will hold index of the  name of the current player: gamer0Name or gamer1Name; currentPlayer ^ 1 will give the index of the other player  
 var gameNumber = -1;
 var gameActive    = false;
-var currentPlayer = 0 ; // Will hold index of the  name of the current player: gamer0Name or gamer1Name; currentPlayer ^ 1 will give the index of the other player  
 var A,B,C; // Account balances
 
-var gamer00   //  = Gamer0  Behaviour; 
-var gamer01   // =  Gamer1  Behaviour;  
+var gamer00behaviour   //  = Gamer0  Behaviour; 
+var gamer01behaviour   // =  Gamer1  Behaviour;  
 //  handler references
-var handler00 = null;
-var handler01 = null;                                   
+var handler00 = null; //helper to remove old event listeners when starting a new game with different player types (e.g., switching from human to Robo1 or vice versa)
+var handler01 = null; //helper to remove old event listeners when starting a new game with different player types (e.g., switching from human to Robo1 or vice versa)                                  
    
 
 gameLog.innerHTML = `...`;   
@@ -131,7 +131,7 @@ var logMessage = ""
                                                  return [ accA, accB, accC];
                                       }
 
-let createGamerBehaviour = function(howGetAndSetAccount) { // This function creates a behavior for a gamer based on the provided method for getting and setting account values.
+      let createGamerBehaviour = function(howGetAndSetAccount) { // This function creates a behavior for a gamer based on the provided method for getting and setting account values.
                            let getAndSetAccount = howGetAndSetAccount; // closure to hold the method for getting and setting account values, allowing for different behaviors for different gamers (e.g., human player vs. Robo1).
                             return function() { 
                                  // Get input values
@@ -190,47 +190,43 @@ let createGamerBehaviour = function(howGetAndSetAccount) { // This function crea
 
                                           if(makeTurnGamer1.disabled){makeTurnGamer1.disabled =false; makeTurnGamer2.disabled =true;}
                                                      else            {makeTurnGamer1.disabled =true; makeTurnGamer2.disabled =false;}    
+                                                   }
                             }
-}
-
-
-
- 
-//adding Event Listener to button with id=startGame
- startGame.addEventListener("click", 
+ //adding Event Listener to button with id=startGame
+  startGame.addEventListener("click", 
                             //// ------------Start Game------------------------------
                             () => {
                                     gameActive = true;
 
-                                    if(playerName.value.trim() == "") playerName.value = gamer0Name;
-                                       else                           {gamer0Name = playerName.value; gamer[0] = gamer0Name;}
+                                    if(playerName.value.trim() == "") playerName.value = gamer0Name;// If the player name input field is empty, use the default gamer0Name; otherwise, update gamer0Name with the value from the input field and update the gamer array accordingly.
+                                    else                             {gamer0Name = playerName.value; gamer[0] = gamer0Name;}
 
                                     if(partnerName.value.trim() == "")partnerName.value = gamer1Name;
-                                       else                           {gamer1Name = partnerName.value; gamer[1] = gamer1Name;}
+                                    else                             {gamer1Name = partnerName.value; gamer[1] = gamer1Name;}
 
-                                     if(gamer0Name.startsWith("Robo1")){gamer00 = createGamerBehaviour(getAccountsFromRobo1); }
-                                     else if(gamer0Name.startsWith("Robo2"))gamer00 = createGamerBehaviour(getAccountsFromRobo2); 
-                                          else if(gamer0Name.startsWith("Robo3"))gamer00 = createGamerBehaviour(getAccountsFromRobo3); 
-                                                else   gamer00   = createGamerBehaviour(getAccountsFromHTML); 
+                                     if(gamer0Name.startsWith("Robo1")){gamer00behaviour = createGamerBehaviour(getAccountsFromRobo1); }
+                                     else if(gamer0Name.startsWith("Robo2"))gamer00behaviour = createGamerBehaviour(getAccountsFromRobo2); 
+                                          else if(gamer0Name.startsWith("Robo3"))gamer00behaviour = createGamerBehaviour(getAccountsFromRobo3); 
+                                               else   gamer00behaviour   = createGamerBehaviour(getAccountsFromHTML); 
 
-                                     if(gamer1Name.startsWith("Robo1"))gamer01 = createGamerBehaviour(getAccountsFromRobo1); 
-                                     else if(gamer1Name.startsWith("Robo2"))gamer01 = createGamerBehaviour(getAccountsFromRobo2); 
-                                          else if(gamer1Name.startsWith("Robo3"))gamer01 = createGamerBehaviour(getAccountsFromRobo3); 
-                                                else   gamer01   = createGamerBehaviour(getAccountsFromHTML); 
+                                     if(gamer1Name.startsWith("Robo1"))gamer01behaviour = createGamerBehaviour(getAccountsFromRobo1); 
+                                     else if(gamer1Name.startsWith("Robo2"))gamer01behaviour = createGamerBehaviour(getAccountsFromRobo2); 
+                                          else if(gamer1Name.startsWith("Robo3"))gamer01behaviour = createGamerBehaviour(getAccountsFromRobo3); 
+                                                else   gamer01behaviour   = createGamerBehaviour(getAccountsFromHTML); 
                                                 
-                                       // WITH these four lines:
+                                      // WITH these four lines:
                                       if (handler00) makeTurnGamer1.removeEventListener("click", handler00); // remove old
                                       if (handler01) makeTurnGamer2.removeEventListener("click", handler01); // remove old
 
-                                         handler00 = gamer00;  // save reference
-                                         handler01 = gamer01;
+                                         handler00 = gamer00behaviour;  // save reference
+                                         handler01 = gamer01behaviour;
 
                                           makeTurnGamer1.addEventListener("click", handler00); // add fresh
                                           makeTurnGamer2.addEventListener("click", handler01); // add fresh
 
-                                    gameNumber++;
-                                    if(gameNumber%2==0){makeTurnGamer1.disabled =false; makeTurnGamer2.disabled =true;}
-                                       else            {makeTurnGamer1.disabled =true; makeTurnGamer2.disabled =false;}
+                                    ++gameNumber;// Increment the game number at the start of each new game, allowing for tracking of how many games have been played and alternating which player starts each game based on whether the game number is even or odd.
+                                     if(gameNumber%2==0){makeTurnGamer1.disabled =false; makeTurnGamer2.disabled =true;} // Alternate which player starts each game: if gameNumber is even, gamer0 starts; if odd, gamer1 starts.
+                                     else               {makeTurnGamer1.disabled =true; makeTurnGamer2.disabled =false;}
                                            
                                     let startMessage = `<h5> Game Number: ${gameNumber} Started! </h5>`;
                                      gameLog.innerHTML = startMessage;
@@ -240,7 +236,7 @@ let createGamerBehaviour = function(howGetAndSetAccount) { // This function crea
                                       gameLog.innerHTML += currPlayerMessage;
                                       gameState.innerHTML= startMessage + currPlayerMessage;
                                       
-
+                                    // Initialize accounts with random values between 1 and 10 for each account (A, B, C) at the start of each game, and update the corresponding input fields in the HTML to reflect these initial values.  
                                     A = generateRandomMoney(1, 10);
                                     B = generateRandomMoney(1, 10);
                                     C = generateRandomMoney(1, 10);
