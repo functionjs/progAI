@@ -145,3 +145,16 @@ input[type="number"] {
     text-align: center;
     width: 50px;
 }
+
+#wolfImage {
+  /* Set the speed and timing function (ease-out makes it feel natural) */
+  transition: transform 1.5s ease-in-out;
+  
+  /* Ensure it has a starting point */
+  transform: rotate(0deg);
+}
+
+#wolfImage:hover {
+  /* Rotate 720 degrees (two full circles) */
+  transform: rotate(720deg);
+}
