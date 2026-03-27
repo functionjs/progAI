@@ -15,7 +15,8 @@ var gamer01behaviour   // =  Gamer1  Behaviour;
 //  handler references
 var handler00 = null; //helper to remove old event listeners when starting a new game with different player types (e.g., switching from human to Robo1 or vice versa)
 var handler01 = null; //helper to remove old event listeners when starting a new game with different player types (e.g., switching from human to Robo1 or vice versa)                                  
-   
+var getPlayer0AccountsFrom =  null; // This variable will hold the method for getting and setting account values, allowing for different behaviors for different gamers (e.g., human player vs. Robo1).
+var getPlayer1AccountsFrom =  null; // This variable will hold the method for getting and setting account values, allowing for different behaviors for different gamers (e.g., human player vs. Robo1).
 
 gameLog.innerHTML = `...`;   
 
@@ -87,7 +88,7 @@ var logMessage = ""
                                                  return [ accA, accB, accC];
                                       }
                                       function getAccountsFromRobo2(){// Get current account values from HTML input fields and apply
-                                                                      // logics for Robo2 to play near smart (not dumb version) 
+                                                                      // logics for Robo2 to play near optimal (not dumb version) 
                                               [accA, accB, accC] = [A,B,C] 
                                                 console.log("Getting accounts from Robo2 logic: ", accA, accB, accC);
                                                if(equilibrium(accA, accB, accC) === 0) {
@@ -137,12 +138,10 @@ var logMessage = ""
                                                                      wolfImage.style.transform = trans;
                                                                  }
 
-      let createGamerBehaviour = function(howGetAndSetAccount) { // This function creates a behavior for a gamer based on the provided method for getting and setting account values.
-                           let getAndSetAccount = howGetAndSetAccount; // closure to hold the method for getting and setting account values, allowing for different behaviors for different gamers (e.g., human player vs. Robo1).
-                            return function() { 
-                                 rotateWolf(currentPlayer); // Rotate the wolf image based on the current player index, providing a visual indication of which player's turn it is.
+    let gamerCallbackedTurn = function(howGetAndSetAccountCallback) { // This function creates a behavior for a gamer based on the provided method for getting and setting account values.
+                                            rotateWolf(currentPlayer); // Rotate the wolf image based on the current player index, providing a visual indication of which player's turn it is.
                                  // Get input values
-                                 [accA, accB , accC] = getAndSetAccount()
+                                   [accA, accB , accC] = howGetAndSetAccountCallback();
                                     
                                    // Test if the current Game is over by checking if all accounts are zero
                                    let sumAllZero = (accA + accB + accC === 0)
@@ -197,8 +196,7 @@ var logMessage = ""
 
                                           if(makeTurnGamer1.disabled){makeTurnGamer1.disabled =false; makeTurnGamer2.disabled =true;}
                                                      else            {makeTurnGamer1.disabled =true; makeTurnGamer2.disabled =false;}    
-                                                   }
-                            }
+                                    }
  //adding Event Listener to button with id=startGame
   startGame.addEventListener("click", 
                             //// ------------Start Game------------------------------
@@ -211,15 +209,15 @@ var logMessage = ""
                                     if(partnerName.value.trim() == "")partnerName.value = gamer1Name;
                                     else                             {gamer1Name = partnerName.value; gamer[1] = gamer1Name;}
 
-                                     if(gamer0Name.startsWith("Robo1")){gamer00behaviour = createGamerBehaviour(getAccountsFromRobo1); }
-                                     else if(gamer0Name.startsWith("Robo2"))gamer00behaviour = createGamerBehaviour(getAccountsFromRobo2); 
-                                          else if(gamer0Name.startsWith("Robo3"))gamer00behaviour = createGamerBehaviour(getAccountsFromRobo3); 
-                                               else   gamer00behaviour   = createGamerBehaviour(getAccountsFromHTML); 
+                                     if(gamer0Name.startsWith("Robo1"))getPlayer0AccountsFrom = getAccountsFromRobo1 ; 
+                                     else if(gamer0Name.startsWith("Robo2"))getPlayer0AccountsFrom = getAccountsFromRobo2; 
+                                          else if(gamer0Name.startsWith("Robo3"))getPlayer0AccountsFrom = getAccountsFromRobo3; 
+                                               else   getPlayer0AccountsFrom   = getAccountsFromHTML; 
 
-                                     if(gamer1Name.startsWith("Robo1"))gamer01behaviour = createGamerBehaviour(getAccountsFromRobo1); 
-                                     else if(gamer1Name.startsWith("Robo2"))gamer01behaviour = createGamerBehaviour(getAccountsFromRobo2); 
-                                          else if(gamer1Name.startsWith("Robo3"))gamer01behaviour = createGamerBehaviour(getAccountsFromRobo3); 
-                                                else   gamer01behaviour   = createGamerBehaviour(getAccountsFromHTML); 
+                                     if(gamer1Name.startsWith("Robo1"))getPlayer1AccountsFrom = getAccountsFromRobo1 ; 
+                                     else if(gamer1Name.startsWith("Robo2"))getPlayer1AccountsFrom = getAccountsFromRobo2; 
+                                          else if(gamer1Name.startsWith("Robo3"))getPlayer1AccountsFrom = getAccountsFromRobo3; 
+                                                else   getPlayer1AccountsFrom   = getAccountsFromHTML    ; 
                                                 
                                       // WITH these four lines:
                                       if (handler00) makeTurnGamer1.removeEventListener("click", handler00); // remove old
@@ -227,9 +225,6 @@ var logMessage = ""
 
                                          handler00 = gamer00behaviour;  // save reference
                                          handler01 = gamer01behaviour;
-
-                                          makeTurnGamer1.addEventListener("click", handler00); // add fresh
-                                          makeTurnGamer2.addEventListener("click", handler01); // add fresh
 
                                     ++gameNumber;// Increment the game number at the start of each new game, allowing for tracking of how many games have been played and alternating which player starts each game based on whether the game number is even or odd.
                                      if(gameNumber%2==0){makeTurnGamer1.disabled =false; makeTurnGamer2.disabled =true;} // Alternate which player starts each game: if gameNumber is even, gamer0 starts; if odd, gamer1 starts.
@@ -255,6 +250,10 @@ var logMessage = ""
                                       playerName.disabled = true; //!
                                       partnerName.disabled = true; //!
                                   });
+
+makeTurnGamer1.addEventListener("click", handler00); // add fresh
+makeTurnGamer2.addEventListener("click", handler01); // add fresh
+
 
  
  
