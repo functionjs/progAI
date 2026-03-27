@@ -131,9 +131,16 @@ var logMessage = ""
                                                  return [ accA, accB, accC];
                                       }
 
+                                      function rotateWolf(index) {
+                                                                   let trans= "rotate(0deg)"; 
+                                                                    if (index > 0) trans = "rotate(180deg)";
+                                                                     wolfImage.style.transform = trans;
+                                                                 }
+
       let createGamerBehaviour = function(howGetAndSetAccount) { // This function creates a behavior for a gamer based on the provided method for getting and setting account values.
                            let getAndSetAccount = howGetAndSetAccount; // closure to hold the method for getting and setting account values, allowing for different behaviors for different gamers (e.g., human player vs. Robo1).
                             return function() { 
+                                 rotateWolf(currentPlayer); // Rotate the wolf image based on the current player index, providing a visual indication of which player's turn it is.
                                  // Get input values
                                  [accA, accB , accC] = getAndSetAccount()
                                     

@@ -149,12 +149,11 @@ input[type="number"] {
 #wolfImage {
   /* Set the speed and timing function (ease-out makes it feel natural) */
   transition: transform 1.5s ease-in-out;
-  
   /* Ensure it has a starting point */
   transform: rotate(0deg);
 }
-
+/* When the user hovers over the image, apply the rotation transformation*/
 #wolfImage:hover {
-  /* Rotate 720 degrees (two full circles) */
-  transform: rotate(720deg);
+  /* Rotate 180 degrees (half a circle) */
+  transform: rotate(180deg);
 }
