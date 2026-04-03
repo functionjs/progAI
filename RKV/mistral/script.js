@@ -10,13 +10,13 @@ var gameNumber = -1;
 var gameActive    = false;
 var A,B,C; // Account balances
 
-var gamer00behaviour   //  = Gamer0  Behaviour; 
-var gamer01behaviour   // =  Gamer1  Behaviour;  
+//var gamer00behaviour   //  = Gamer0  Behaviour; 
+//var gamer01behaviour   // =  Gamer1  Behaviour;  
 //  handler references
-var handler00 = null; //helper to remove old event listeners when starting a new game with different player types (e.g., switching from human to Robo1 or vice versa)
-var handler01 = null; //helper to remove old event listeners when starting a new game with different player types (e.g., switching from human to Robo1 or vice versa)                                  
-var getPlayer0AccountsFrom =  null; // This variable will hold the method for getting and setting account values, allowing for different behaviors for different gamers (e.g., human player vs. Robo1).
-var getPlayer1AccountsFrom =  null; // This variable will hold the method for getting and setting account values, allowing for different behaviors for different gamers (e.g., human player vs. Robo1).
+var getPlayer0AccountsFrom =  (e) => {}; // This variable will hold the method for getting and setting account values, allowing for different behaviors for different gamers (e.g., human player vs. Robo1).
+var getPlayer1AccountsFrom =  (e) => {}; // This variable will hold the method for getting and setting account values, allowing for different behaviors for different gamers (e.g., human player vs. Robo1).
+var handlerEnvelope00 = (e) => {}; // This variable will hold the event handler for gamer 0's turn, allowing for dynamic assignment of behavior based on the type of player (human or Robo).
+var handlerEnvelope01 = (e) => {}; // This variable will hold the event handler for gamer 1's turn, allowing for dynamic assignment of behavior based on the type of player (human or Robo).
 
 gameLog.innerHTML = `...`;   
 
@@ -27,29 +27,35 @@ var logMessage = ""
 
 
 
-                                      function generateRandomMoney(min, max){
+                                      function generateRandomMoney(min, max){// Generate a random integer between min and max (inclusive) to initialize account balances at the start of each game, ensuring variability in the game state and different scenarios for players to navigate.
                                                  return min + Math.floor(Math.random() * (max - min + 1)) ;
                                       }
 
-                                      // Equilibrium function
+                                      // Equilibrium function for 3 accounts (a, b, c) to determine if the current game state is a winning position (non-zero) or losing position (zero) for the current player, based on the XOR operation applied to the account balances. This function helps to identify optimal moves for Robo1 by analyzing the binary representation of the account balances and determining whether the current state is favorable for the player or not.
                                       function equilibrium(a, b, c) {
                                           return a ^ b ^ c; // XOR operation to determine if the current state is a winning position (non-zero) or losing position (zero)
-                                                        // 3 ^ 2 = 1 (winning position)
-                                                        // 1 ^ 2 = 3 (winning position)
-                                                        // 3 ^ 1 = 2 (winning position)
-                                                        // 1 ^ 3 ^ 2 = 0 (losing position)
-                                                        // 3 ^ 3 = 0 (losing position)
-                                                        // 2 ^ 2 = 0 (losing position)
+                                                        // 3 ^ 2 = 1 (winning position if You will do correct moves)
+                                                        // 1 ^ 2 = 3 (winning position if You will do correct moves)
+                                                        // 3 ^ 1 = 2 (winning position if You will do correct moves)
+                                                        // 3 ^ 3 = 0 (losing position in any case, no matter what move you do)
+                                                        // 2 ^ 2 = 0 (losing position in any case, no matter what move you do)
 
-                                                        // 1 ^ 1 = 0 (losing position)
-                                                        // 1 ^ 0 = 1 (winning position)
-                                                        // 0 ^ 0 = 0 (losing position)
+                                                        // 1 ^ 1 = 0 (losing position in any case, no matter what move you do)
+                                                        // 1 ^ 0 = 1 (winning position if You will do correct moves)
+                                                        // 0 ^ 0 = 0 (losing position in any case, no matter what move you do)
 
                                                         // binary representation of the accounts can also be used to analyze the game state and determine optimal moves for Robo1.
-                                                        // 3 : 011
-                                                        // 2 : 010
-                                                        // 1 : 001
-                                                        // 0 : 000
+                                                        // 3 :0011
+                                                        // 2 :0010
+                                                        // 1 :0001
+                                                        // 0 :0000
+                                                        // 4 :0100
+                                                        // 5 :0101
+                                                        // 6 :0110
+                                                        // 7 :0111    
+                                                        // 8 :1000
+                                                        // 9 :1001
+                                                        // 10:1010       
                                                         // The XOR operation helps to identify winning and losing positions based on the binary representation of the accounts.
 
                                                         // 3 : 011
@@ -71,7 +77,7 @@ var logMessage = ""
                                                    console.log("Getting accounts from HTML");
                                                    return [ parseInt(accountA.value), parseInt(accountB.value), parseInt(accountC.value)];
                                           }
-                                      function getAccountsFromRobo1(){// Get current account values from HTML input fields and apply
+                                      function getAccountsFromRobo1(){ // Get current account values from HTML input fields and apply
                                                                       // logics for Robo1 to play "smart" (dumb version: just play random moves) 
                                               [accA, accB, accC] = [A,B,C] 
                                                console.log("Getting accounts from Robo1 logic: ", accA, accB, accC);
@@ -87,7 +93,7 @@ var logMessage = ""
                                                          else if(accC > 0) accC = generateRandomMoney(0, accC-1);
                                                  return [ accA, accB, accC];
                                       }
-                                      function getAccountsFromRobo2(){// Get current account values from HTML input fields and apply
+                                      function getAccountsFromRobo2(){ // Get current account values from HTML input fields and apply
                                                                       // logics for Robo2 to play near optimal (not dumb version) 
                                               [accA, accB, accC] = [A,B,C] 
                                                 console.log("Getting accounts from Robo2 logic: ", accA, accB, accC);
@@ -109,8 +115,8 @@ var logMessage = ""
                                                     }      
                                                  return [ accA, accB, accC];
                                       }
-                                      function getAccountsFromRobo3(){// Get current account values from HTML input fields and apply
-                                                                      // logics for Robo3 to play  absolute smart!
+                                        function getAccountsFromRobo3(){ // Get current account values from HTML input fields and apply
+                                                                        // logics for Robo3 to play  absolute smart!
                                               [accA, accB, accC] = [A,B,C] 
                                                 console.log("Getting accounts from Robo3 logic: ", accA, accB, accC);
                                                if(equilibrium(accA, accB, accC) === 0) {
@@ -138,9 +144,9 @@ var logMessage = ""
                                                                      wolfImage.style.transform = trans;
                                                                  }
 
-    let gamerCallbackedTurn = function(howGetAndSetAccountCallback) { // This function creates a behavior for a gamer based on the provided method for getting and setting account values.
-                                            rotateWolf(currentPlayer); // Rotate the wolf image based on the current player index, providing a visual indication of which player's turn it is.
-                                 // Get input values
+    let gamerCallbackedTurn = function(e, howGetAndSetAccountCallback) { // This function creates a behavior for a gamer based on the provided method for getting and setting account values.
+                                   console.log("Gamer callbacked turn with method: ", howGetAndSetAccountCallback.name, " event:",e);
+                                   // Get input values
                                    [accA, accB , accC] = howGetAndSetAccountCallback();
                                     
                                    // Test if the current Game is over by checking if all accounts are zero
@@ -220,11 +226,14 @@ var logMessage = ""
                                                 else   getPlayer1AccountsFrom   = getAccountsFromHTML    ; 
                                                 
                                       // WITH these four lines:
-                                      if (handler00) makeTurnGamer1.removeEventListener("click", handler00); // remove old
-                                      if (handler01) makeTurnGamer2.removeEventListener("click", handler01); // remove old
+                                      makeTurnGamer1.removeEventListener("click", handlerEnvelope00); // remove old
+                                       handlerEnvelope00 =  (e) => gamerCallbackedTurn(e, getPlayer0AccountsFrom);                                 
+                                         makeTurnGamer1.addEventListener("click", handlerEnvelope00); // add new
+                                      
+                                      makeTurnGamer2.removeEventListener("click", handlerEnvelope01); // remove old
+                                       handlerEnvelope01 =  (e) => gamerCallbackedTurn(e, getPlayer1AccountsFrom);                                 
+                                         makeTurnGamer2.addEventListener("click", handlerEnvelope01); // add new   
 
-                                         handler00 = gamer00behaviour;  // save reference
-                                         handler01 = gamer01behaviour;
 
                                     ++gameNumber;// Increment the game number at the start of each new game, allowing for tracking of how many games have been played and alternating which player starts each game based on whether the game number is even or odd.
                                      if(gameNumber%2==0){makeTurnGamer1.disabled =false; makeTurnGamer2.disabled =true;} // Alternate which player starts each game: if gameNumber is even, gamer0 starts; if odd, gamer1 starts.
@@ -251,8 +260,6 @@ var logMessage = ""
                                       partnerName.disabled = true; //!
                                   });
 
-makeTurnGamer1.addEventListener("click", handler00); // add fresh
-makeTurnGamer2.addEventListener("click", handler01); // add fresh
 
 
  
