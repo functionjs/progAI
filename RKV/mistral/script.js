@@ -73,6 +73,33 @@ var logMessage = ""
                                                          return currentPlayerIndex ^ 1;
                                       }
 
+                                      function randomMove(accounts){
+                                        //let accounts = [A,B,C] ;
+                                         let n = Math.floor(Math.random()*3)
+                                          if(accounts[n]==0) return randomMove(accounts); // If the randomly selected account is already zero, recursively call randomMove to select a different account until a non-zero account is chosen.
+                                          
+                                          accounts[n] -= Math.floor(Math.random()* (accounts[n]-1))+1;
+                                           return accounts;
+                                      }
+
+                                      function smartMove(accounts, withMistake=false){
+                                        //let accounts = [A,B,C] ;
+                                         let xor = equilibrium(accounts[0],accounts[1],accounts[2]);
+
+                                          if(xor === 0 || (withMistake && Math.random()<0.2)){
+                                              return randomMove(accounts);
+                                          }
+                                           // accounts=[2, 3, 4]   xor=5
+                                           for(let i=0; i<3; i++){
+                                               acc= accounts[i];
+                                                let target = acc ^ xor;
+                                                 if(target < acc){
+                                                    acc = target;
+                                                     accounts[i] = acc;
+                                                      return accounts;                                             }
+                                           }
+                                      }
+
                                           function getAccountsFromHTML(){// Get current account values from HTML input fields
                                                    console.log("Getting accounts from HTML");
                                                    return [ parseInt(accountA.value), parseInt(accountB.value), parseInt(accountC.value)];
@@ -95,48 +122,18 @@ var logMessage = ""
                                       }
                                       function getAccountsFromRobo2(){ // Get current account values from HTML input fields and apply
                                                                       // logics for Robo2 to play near optimal (not dumb version) 
-                                              [accA, accB, accC] = [A,B,C] 
-                                                console.log("Getting accounts from Robo2 logic: ", accA, accB, accC);
-                                               if(equilibrium(accA, accB, accC) === 0) {
-                                                  // Robo2 to tie the Game!
-                                                 /* 
-                                                  if(accA > 0) accA--;
-                                                  else if(accB > 0) accB--;
-                                                       else if(accC > 0) accC--;
-                                                 */       
-                                               }    
-                                               else // Robo2 to play near optimal moves
-                                                    {
-                                                     /* 
-                                                     if(accA > 0) accA = generateRandomMoney(0, accA-1);
-                                                     else if(accB > 0) accB = generateRandomMoney(0, accB-1);
-                                                         else if(accC > 0) accC = generateRandomMoney(0, accC-1);
-                                                     */    
-                                                    }      
-                                                 return [ accA, accB, accC];
+                                              let accounts  = [A,B,C] 
+                                                console.log("Getting accounts for Robo2 : ", accounts);
+                                               let newaccounts = smartMove(accounts, true); 
+                                                console.log("Returning new accounts from Robo2 logic: ", newaccounts); 
+                                                 return newaccounts;
                                       }
                                         function getAccountsFromRobo3(){ // Get current account values from HTML input fields and apply
                                                                         // logics for Robo3 to play  absolute smart!
-                                              [accA, accB, accC] = [A,B,C] 
-                                                console.log("Getting accounts from Robo3 logic: ", accA, accB, accC);
-                                               if(equilibrium(accA, accB, accC) === 0) {
-                                                  // Robo3 to tie the Game!
-                                                 /* 
-                                                  if(accA > 0) accA--;
-                                                  else if(accB > 0) accB--;
-                                                       else if(accC > 0) accC--;
-                                                 */       
-                                               }    
-                                               else // Robo3 to play  optimal moves!
-                                                    {
-                                                     /* 
-                                                     if(accA > 0) accA = generateRandomMoney(0, accA-1);
-                                                     else if(accB > 0) accB = generateRandomMoney(0, accB-1);
-                                                         else if(accC > 0) accC = generateRandomMoney(0, accC-1);
-                                                     */    
-                                                    }      
-                                                 return [ accA, accB, accC];
-                                      }
+                                              let accounts = [A,B,C] 
+                                                console.log("Getting accounts from Robo3 logic: ", accounts);
+                                                 return smartMove(accounts);
+                                        }
 
                                       function rotateWolf(index) {
                                                                    let trans= "rotate(0deg)"; 
@@ -144,8 +141,9 @@ var logMessage = ""
                                                                      wolfImage.style.transform = trans;
                                                                  }
 
-    let gamerCallbackedTurn = function(e, howGetAndSetAccountCallback) { // This function creates a behavior for a gamer based on the provided method for getting and setting account values.
+    const gamerCallbackedTurn = function(e, howGetAndSetAccountCallback) { // This function creates a behavior for a gamer based on the provided method for getting and setting account values.
                                    console.log("Gamer callbacked turn with method: ", howGetAndSetAccountCallback.name, " event:",e);
+
                                    // Get input values
                                    [accA, accB , accC] = howGetAndSetAccountCallback();
                                     
@@ -195,54 +193,59 @@ var logMessage = ""
                                       }
 
                                           // Switch player
+                                          rotateWolf(partnerOf(currentPlayer));
                                            currentPlayer = partnerOf(currentPlayer);
                                             logMessage = `<br><span>  Now ${gamer[currentPlayer]}'s Turn </span>`;
                                              gameLog.innerHTML += logMessage;
                                               gameState.innerHTML = logMessage; 
 
-                                          if(makeTurnGamer1.disabled){makeTurnGamer1.disabled =false; makeTurnGamer2.disabled =true;}
-                                                     else            {makeTurnGamer1.disabled =true; makeTurnGamer2.disabled =false;}    
-                                    }
+                                          if(makeTurnGamer1.disabled){makeTurnGamer1.disabled =false; makeTurnGamer2.disabled =true; }
+                                          else                       {makeTurnGamer1.disabled =true;  makeTurnGamer2.disabled =false;}   
+
+                                            
+
+                                }
  //adding Event Listener to button with id=startGame
   startGame.addEventListener("click", 
                             //// ------------Start Game------------------------------
                             () => {
                                     gameActive = true;
+                                     
+                                    const inputPlayerName = [playerName, partnerName];
+                                        const setPlayerName = (playerIndex) => {
+                                                                                if(inputPlayerName[playerIndex].value.trim() == "") inputPlayerName[playerIndex].value = gamer[playerIndex]; // If the player name input field is empty, use the default gamer name; otherwise, update the gamer name with the value from the input field and update the gamer array accordingly.
+                                                                                else                                                gamer[playerIndex] = inputPlayerName[playerIndex].value; 
+                                        }
+                                    setPlayerName(0); // Set player 0 name based on input field or default value
+                                    setPlayerName(1); // Set player 1 name based on input field or default value
 
-                                    if(playerName.value.trim() == "") playerName.value = gamer0Name;// If the player name input field is empty, use the default gamer0Name; otherwise, update gamer0Name with the value from the input field and update the gamer array accordingly.
-                                    else                             {gamer0Name = playerName.value; gamer[0] = gamer0Name;}
-
-                                    if(partnerName.value.trim() == "")partnerName.value = gamer1Name;
-                                    else                             {gamer1Name = partnerName.value; gamer[1] = gamer1Name;}
-
-                                     if(gamer0Name.startsWith("Robo1"))getPlayer0AccountsFrom = getAccountsFromRobo1 ; 
-                                     else if(gamer0Name.startsWith("Robo2"))getPlayer0AccountsFrom = getAccountsFromRobo2; 
-                                          else if(gamer0Name.startsWith("Robo3"))getPlayer0AccountsFrom = getAccountsFromRobo3; 
-                                               else   getPlayer0AccountsFrom   = getAccountsFromHTML; 
-
-                                     if(gamer1Name.startsWith("Robo1"))getPlayer1AccountsFrom = getAccountsFromRobo1 ; 
-                                     else if(gamer1Name.startsWith("Robo2"))getPlayer1AccountsFrom = getAccountsFromRobo2; 
-                                          else if(gamer1Name.startsWith("Robo3"))getPlayer1AccountsFrom = getAccountsFromRobo3; 
-                                                else   getPlayer1AccountsFrom   = getAccountsFromHTML    ; 
-                                                
+                                        const selectAccountsFunction = (playerIndex) => {
+                                                                                      if(gamer[playerIndex].startsWith("Robo1")) return getAccountsFromRobo1 ; 
+                                                                                      else if(gamer[playerIndex].startsWith("Robo2")) return getAccountsFromRobo2; 
+                                                                                           else if(gamer[playerIndex].startsWith("Robo3")) return getAccountsFromRobo3; 
+                                                                                                else   return getAccountsFromHTML; 
+                                                                                     }
+                                    const turnButtons = [makeTurnGamer1, makeTurnGamer2];
+                                    const handlerEnvelopes = [handlerEnvelope00, handlerEnvelope01];
+                                     for(let gamerIndex=0; gamerIndex<2; gamerIndex++){ // Loop through both players to set up their turn buttons and event handlers based on their assigned methods for getting and setting account values.
+                                         turnButtons[gamerIndex].removeEventListener("click", handlerEnvelopes[gamerIndex]); // Remove any existing event listener for the player's turn button to prevent multiple handlers from being attached if the game is restarted.
+                                          handlerEnvelopes[gamerIndex] =  (e) => gamerCallbackedTurn(e, selectAccountsFunction(gamerIndex)); // Create a new event handler for the player's turn button that calls the gamerCallbackedTurn function with the appropriate method for getting and setting account values based on the player's name.
+                                           turnButtons[gamerIndex].addEventListener("click", handlerEnvelopes[gamerIndex]); // Add the new event listener to the player's turn button to enable them to take their turn in the game.
+                                     } 
                                       // WITH these four lines:
-                                      makeTurnGamer1.removeEventListener("click", handlerEnvelope00); // remove old
-                                       handlerEnvelope00 =  (e) => gamerCallbackedTurn(e, getPlayer0AccountsFrom);                                 
-                                         makeTurnGamer1.addEventListener("click", handlerEnvelope00); // add new
-                                      
-                                      makeTurnGamer2.removeEventListener("click", handlerEnvelope01); // remove old
-                                       handlerEnvelope01 =  (e) => gamerCallbackedTurn(e, getPlayer1AccountsFrom);                                 
-                                         makeTurnGamer2.addEventListener("click", handlerEnvelope01); // add new   
 
 
                                     ++gameNumber;// Increment the game number at the start of each new game, allowing for tracking of how many games have been played and alternating which player starts each game based on whether the game number is even or odd.
                                      if(gameNumber%2==0){makeTurnGamer1.disabled =false; makeTurnGamer2.disabled =true;} // Alternate which player starts each game: if gameNumber is even, gamer0 starts; if odd, gamer1 starts.
                                      else               {makeTurnGamer1.disabled =true; makeTurnGamer2.disabled =false;}
+                                    
+   
                                            
                                     let startMessage = `<h5> Game Number: ${gameNumber} Started! </h5>`;
                                      gameLog.innerHTML = startMessage;
 
                                     currentPlayer = gameNumber % 2 // currentPlayer will alternate between 0 and 1 for each new game, ensuring that the starting player changes every game.
+                                     rotateWolf(currentPlayer); 
                                      let currPlayerMessage = `<span>${gamer[currentPlayer]}'s Turn </span>`;
                                       gameLog.innerHTML += currPlayerMessage;
                                       gameState.innerHTML= startMessage + currPlayerMessage;
