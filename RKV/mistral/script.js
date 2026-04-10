@@ -25,6 +25,8 @@ makeTurnGamer1.disabled = true; //!
 startGame.disabled = false; //!
 var logMessage = ""
 
+var controller = new AbortController();
+
 
 
                                       function generateRandomMoney(min, max){// Generate a random integer between min and max (inclusive) to initialize account balances at the start of each game, ensuring variability in the game state and different scenarios for players to navigate.
@@ -171,7 +173,7 @@ var logMessage = ""
                                          if(isCheating) {  // cheater is looser and the other player is winner
                                             gameState.innerHTML= `<h3>Cheating detected!</h3>`;
                                             looser = currentPlayer
-                                            winner = partnerOf(currentPlayer);     
+                                            winner = partnerOf(currentPlayer); 
                                          }   
                                          else // if(sumAllZero) // current player is winner and the other player is looser
                                             {
@@ -205,10 +207,13 @@ var logMessage = ""
                                             
 
                                 }
+                                
  //adding Event Listener to button with id=startGame
   startGame.addEventListener("click", 
                             //// ------------Start Game------------------------------
                             () => {
+                              controller.abort();
+                              controller = new AbortController();
                                     gameActive = true;
                                      
                                     const inputPlayerName = [playerName, partnerName];
@@ -228,9 +233,9 @@ var logMessage = ""
                                     const turnButtons = [makeTurnGamer1, makeTurnGamer2];
                                     const handlerEnvelopes = [handlerEnvelope00, handlerEnvelope01];
                                      for(let gamerIndex=0; gamerIndex<2; gamerIndex++){ // Loop through both players to set up their turn buttons and event handlers based on their assigned methods for getting and setting account values.
-                                         turnButtons[gamerIndex].removeEventListener("click", handlerEnvelopes[gamerIndex]); // Remove any existing event listener for the player's turn button to prevent multiple handlers from being attached if the game is restarted.
+                                        //  turnButtons[gamerIndex].removeEventListener("click", handlerEnvelopes[gamerIndex]); // Remove any existing event listener for the player's turn button to prevent multiple handlers from being attached if the game is restarted.
                                           handlerEnvelopes[gamerIndex] =  (e) => gamerCallbackedTurn(e, selectAccountsFunction(gamerIndex)); // Create a new event handler for the player's turn button that calls the gamerCallbackedTurn function with the appropriate method for getting and setting account values based on the player's name.
-                                           turnButtons[gamerIndex].addEventListener("click", handlerEnvelopes[gamerIndex]); // Add the new event listener to the player's turn button to enable them to take their turn in the game.
+                                           turnButtons[gamerIndex].addEventListener("click", handlerEnvelopes[gamerIndex],{ signal: controller.signal }); // Add the new event listener to the player's turn button to enable them to take their turn in the game.
                                      } 
                                       // WITH these four lines:
 
