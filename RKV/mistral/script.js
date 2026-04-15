@@ -18,11 +18,11 @@ var getPlayer1AccountsFrom =  (e) => {}; // This variable will hold the method f
 var handlerEnvelope00 = (e) => {}; // This variable will hold the event handler for gamer 0's turn, allowing for dynamic assignment of behavior based on the type of player (human or Robo).
 var handlerEnvelope01 = (e) => {}; // This variable will hold the event handler for gamer 1's turn, allowing for dynamic assignment of behavior based on the type of player (human or Robo).
 
-gameLog.innerHTML = `...`;   
+gameLogDiv.innerHTML = `...`;   
 
-makeTurnGamer2.disabled = true; //!
-makeTurnGamer1.disabled = true; //!
-startGame.disabled = false; //!
+makeTurnGamer2Button.disabled = true; //!
+makeTurnGamer1Button.disabled = true; //!
+startGameButton.disabled = false; //!
 var logMessage = ""
 
 var controller = new AbortController();
@@ -84,32 +84,37 @@ var controller = new AbortController();
                                            return accounts;
                                       }
 
-                                      function smartMove(accounts, withMistake=false){
-                                        //let accounts = [A,B,C] ;
-                                         let xor = equilibrium(accounts[0],accounts[1],accounts[2]);
-
-                                          if(xor === 0 || (withMistake && Math.random()<0.2)){
-                                              return randomMove(accounts);
+                                          function smartMove(accounts, withMistake=false){
+                                            //let accounts = [A,B,C] ;
+                                             let xor = equilibrium(accounts[0],accounts[1],accounts[2]);
+                                          
+                                              if(xor === 0 || (withMistake && Math.random()<0.2)){
+                                                  return randomMove(accounts);
+                                              }
+                                               // accounts=[2, 3, 4]   xor= 2^3^4 =5    
+                                               //                          (2^5)^3^4  = 0  =>  (2^5)=7 > 2   => bad!
+                                               //                           2^(3^5)^4 = 0  =>  (3^5)=6 > 3   => bad!
+                                               //                           2^3^(4^5) = 0  =>  (4^5)=1 < 4   => new accounts=[2,3,1]   
+                                               //
+                                               for(let i=0; i<3; i++){
+                                                   acc = accounts[i];
+                                                    let target = acc ^ xor;
+                                                     if(target < acc){
+                                                        acc = target;
+                                                         accounts[i] = acc;
+                                                          return accounts;            
+                                                     }
+                                               }
                                           }
-                                           // accounts=[2, 3, 4]   xor=5
-                                           for(let i=0; i<3; i++){
-                                               acc= accounts[i];
-                                                let target = acc ^ xor;
-                                                 if(target < acc){
-                                                    acc = target;
-                                                     accounts[i] = acc;
-                                                      return accounts;                                             }
-                                           }
-                                      }
 
-                                          function getAccountsFromHTML(){// Get current account values from HTML input fields
+                                      function getAccountsFromHTML(){// Get current account values from HTML input fields
                                                    console.log("Getting accounts from HTML");
                                                    return [ parseInt(accountA.value), parseInt(accountB.value), parseInt(accountC.value)];
-                                          }
+                                      }
                                       function getAccountsFromRobo1(){ // Get current account values from HTML input fields and apply
                                                                       // logics for Robo1 to play "smart" (dumb version: just play random moves) 
                                               [accA, accB, accC] = [A,B,C] 
-                                               console.log("Getting accounts from Robo1 logic: ", accA, accB, accC);
+                                               console.log("Getting accounts for Robo1: ", accA, accB, accC);
                                                if(equilibrium(accA, accB, accC) === 0) {
                                                   // Robo1 to draw the Game!
                                                   if(accA > 0) accA--;
@@ -120,6 +125,7 @@ var controller = new AbortController();
                                                     if(accA > 0) accA = generateRandomMoney(0, accA-1);
                                                     else if(accB > 0) accB = generateRandomMoney(0, accB-1);
                                                          else if(accC > 0) accC = generateRandomMoney(0, accC-1);
+                                                console.log("Returning new accounts from Robo1 logic: ", [accA, accB, accC]); 
                                                  return [ accA, accB, accC];
                                       }
                                       function getAccountsFromRobo2(){ // Get current account values from HTML input fields and apply
@@ -130,12 +136,14 @@ var controller = new AbortController();
                                                 console.log("Returning new accounts from Robo2 logic: ", newaccounts); 
                                                  return newaccounts;
                                       }
-                                        function getAccountsFromRobo3(){ // Get current account values from HTML input fields and apply
+                                      function getAccountsFromRobo3(){ // Get current account values from HTML input fields and apply
                                                                         // logics for Robo3 to play  absolute smart!
                                               let accounts = [A,B,C] 
                                                 console.log("Getting accounts from Robo3 logic: ", accounts);
-                                                 return smartMove(accounts);
-                                        }
+                                                let newaccounts = smartMove(accounts); 
+                                                 console.log("Returning new accounts from Robo3 logic: ", newaccounts); 
+                                                  return newaccounts;
+                                      }
 
                                       function rotateWolf(index) {
                                                                    let trans= "rotate(0deg)"; 
@@ -167,7 +175,7 @@ var controller = new AbortController();
                                          //todo message about my succefull move
                                          // Log move
                                           logMessage = ` ${gamer[currentPlayer]} removed coins. Current accounts: A=${A}, B=${B}, C=${C}` 
-                                           gameLog.innerHTML += logMessage;
+                                           gameLogDiv.innerHTML += logMessage;
                                       // Player should not cheat and coins must exist
                                       if (isCheating || sumAllZero ) { //end of current game round
                                          if(isCheating) {  // cheater is looser and the other player is winner
@@ -182,15 +190,15 @@ var controller = new AbortController();
                                               looser = partnerOf(currentPlayer);
                                             }
                                            logMessage = `<span class=fired> ${gamer[looser]} is fired!</span>`;
-                                            gameLog.innerHTML   += logMessage;
+                                            gameLogDiv.innerHTML   += logMessage;
                                             gameState.innerHTML += logMessage + `<h2>${gamer[winner]} wins the game! </h2> `;
                                            gameActive = false;
                                            
-                                           startGame.disabled = false; //!
+                                           startGameButton.disabled = false; //!
                                            playerName.disabled = false; //!
                                            partnerName.disabled = false; //!
-                                           makeTurnGamer2.disabled =true;
-                                           makeTurnGamer1.disabled =true;
+                                           makeTurnGamer2Button.disabled =true;
+                                           makeTurnGamer1Button.disabled =true;
                                             return;
                                       }
 
@@ -198,18 +206,18 @@ var controller = new AbortController();
                                           rotateWolf(partnerOf(currentPlayer));
                                            currentPlayer = partnerOf(currentPlayer);
                                             logMessage = `<br><span>  Now ${gamer[currentPlayer]}'s Turn </span>`;
-                                             gameLog.innerHTML += logMessage;
+                                             gameLogDiv.innerHTML += logMessage;
                                               gameState.innerHTML = logMessage; 
 
-                                          if(makeTurnGamer1.disabled){makeTurnGamer1.disabled =false; makeTurnGamer2.disabled =true; }
-                                          else                       {makeTurnGamer1.disabled =true;  makeTurnGamer2.disabled =false;}   
+                                          if(makeTurnGamer1Button.disabled){makeTurnGamer1Button.disabled =false; makeTurnGamer2Button.disabled =true; }
+                                          else                       {makeTurnGamer1Button.disabled =true;  makeTurnGamer2Button.disabled =false;}   
 
                                             
 
                                 }
                                 
  //adding Event Listener to button with id=startGame
-  startGame.addEventListener("click", 
+  startGameButton.addEventListener("click", 
                             //// ------------Start Game------------------------------
                             () => {
                               controller.abort();
@@ -230,7 +238,7 @@ var controller = new AbortController();
                                                                                            else if(gamer[playerIndex].startsWith("Robo3")) return getAccountsFromRobo3; 
                                                                                                 else   return getAccountsFromHTML; 
                                                                                      }
-                                    const turnButtons = [makeTurnGamer1, makeTurnGamer2];
+                                    const turnButtons = [makeTurnGamer1Button, makeTurnGamer2Button];
                                     const handlerEnvelopes = [handlerEnvelope00, handlerEnvelope01];
                                      for(let gamerIndex=0; gamerIndex<2; gamerIndex++){ // Loop through both players to set up their turn buttons and event handlers based on their assigned methods for getting and setting account values.
                                         //  turnButtons[gamerIndex].removeEventListener("click", handlerEnvelopes[gamerIndex]); // Remove any existing event listener for the player's turn button to prevent multiple handlers from being attached if the game is restarted.
@@ -241,19 +249,19 @@ var controller = new AbortController();
 
 
                                     ++gameNumber;// Increment the game number at the start of each new game, allowing for tracking of how many games have been played and alternating which player starts each game based on whether the game number is even or odd.
-                                     if(gameNumber%2==0){makeTurnGamer1.disabled =false; makeTurnGamer2.disabled =true;} // Alternate which player starts each game: if gameNumber is even, gamer0 starts; if odd, gamer1 starts.
-                                     else               {makeTurnGamer1.disabled =true; makeTurnGamer2.disabled =false;}
+                                     if(gameNumber%2==0){makeTurnGamer1Button.disabled =false; makeTurnGamer2Button.disabled =true;} // Alternate which player starts each game: if gameNumber is even, gamer0 starts; if odd, gamer1 starts.
+                                     else               {makeTurnGamer1Button.disabled =true; makeTurnGamer2Button.disabled =false;}
                                     
    
                                            
                                     let startMessage = `<h5> Game Number: ${gameNumber} Started! </h5>`;
-                                     gameLog.innerHTML = startMessage;
+                                     gameLogDiv.innerHTML = startMessage;
 
                                     currentPlayer = gameNumber % 2 // currentPlayer will alternate between 0 and 1 for each new game, ensuring that the starting player changes every game.
                                      rotateWolf(currentPlayer); 
                                      let currPlayerMessage = `<span>${gamer[currentPlayer]}'s Turn </span>`;
-                                      gameLog.innerHTML += currPlayerMessage;
-                                      gameState.innerHTML= startMessage + currPlayerMessage;
+                                      gameLogDiv.innerHTML += currPlayerMessage;
+                                      gameStatePre.innerHTML= startMessage + currPlayerMessage;
                                       
                                     // Initialize accounts with random values between 1 and 10 for each account (A, B, C) at the start of each game, and update the corresponding input fields in the HTML to reflect these initial values.  
                                     A = generateRandomMoney(1, 10);
@@ -263,7 +271,7 @@ var controller = new AbortController();
                                      accountB.value = B;
                                      accountC.value = C;
 
-                                      startGame.disabled = true; //!
+                                      startGameButton.disabled = true; //!
                                       playerName.disabled = true; //!
                                       partnerName.disabled = true; //!
                                   });
